@@ -1,6 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 import { ControlSheet } from "./components/control-sheet";
 import { BuilderExportPanel } from "./components/export-panel";
@@ -32,6 +43,9 @@ export default function Home() {
   const [draggingFieldId, setDraggingFieldId] = useState<string | null>(null);
   const [activePanel, setActivePanel] = useState<ControlPanel>(null);
   const [previewSubmitState] = useState<SubmitButtonState>("idle");
+  const [workspaceOrientation, setWorkspaceOrientation] = useState<
+    "horizontal" | "vertical"
+  >("horizontal");
 
   const selectedField =
     config.fields.find((field) => field.id === selectedFieldId) ??
@@ -128,50 +142,122 @@ export default function Home() {
     window.setTimeout(() => setCopiedState(""), 1800);
   };
 
+  useEffect(() => {
+    const updateOrientation = () => {
+      setWorkspaceOrientation(window.innerWidth <= 1180 ? "vertical" : "horizontal");
+    };
+
+    updateOrientation();
+    window.addEventListener("resize", updateOrientation);
+
+    return () => window.removeEventListener("resize", updateOrientation);
+  }, []);
+
+  const sheetMeta = (() => {
+    switch (activePanel) {
+      case "add":
+        return {
+          title: "Add Field",
+          description: "Choose the next field you want to insert into the form.",
+        };
+      case "edit":
+        return {
+          title: "Field Settings",
+          description:
+            "Edit copy, validation, and choice options for the selected field.",
+        };
+      case "integrations":
+        return {
+          title: "Integrations",
+          description:
+            "Keep delivery targets close to the form configuration so exports stay aligned.",
+        };
+      case "form":
+        return {
+          title: "Form Settings",
+          description:
+            "Define the top-level content that gets reused in the export output.",
+        };
+      case "style":
+        return {
+          title: "Styling Controls",
+          description:
+            "These tokens drive both the preview and generated code defaults.",
+        };
+      default:
+        return null;
+    }
+  })();
+
   return (
     <main className="builder-shell">
       <div className="builder-workspace">
-        <div className="builder-preview-panel">
-          <BuilderPreviewPanel
-            fields={config.fields}
-            layout={activeLayout}
-            previewMode={previewMode}
-            onPreviewModeChange={setPreviewMode}
-            selectedFieldId={selectedFieldId}
-            draggingFieldId={draggingFieldId}
-            onFieldSelect={setSelectedFieldId}
-            onFieldDragStart={(fieldId) => {
-              setDraggingFieldId(fieldId);
-              setSelectedFieldId(fieldId);
-            }}
-            onFieldDragEnd={() => setDraggingFieldId(null)}
-            onFieldDrop={(targetFieldId) => {
-              if (draggingFieldId) {
-                moveFieldTo(draggingFieldId, targetFieldId);
-                setDraggingFieldId(null);
-              }
-            }}
-            onFieldRemove={removeField}
-            onFieldWidthSet={setFieldWidth}
-            getFieldWidthClass={fieldWidthClass}
-            styling={config.styling}
-            integrations={config.integrations}
-            formSettings={config.formSettings}
-            submitState={previewSubmitState}
-          />
-
-          <BuilderExportPanel
-            copiedState={copiedState}
-            onCopy={copyText}
-            generatedFramerCode={generatedFramerCode}
-            generatedAppsScript={generatedAppsScript}
-            generatedSetup={generatedSetup}
-          />
-        </div>
+        <ResizablePanelGroup
+          orientation={workspaceOrientation}
+          className="builder-preview-panel"
+        >
+          <ResizablePanel
+            defaultSize={workspaceOrientation === "horizontal" ? 58 : 60}
+            minSize={workspaceOrientation === "horizontal" ? 40 : 30}
+          >
+            <BuilderPreviewPanel
+              fields={config.fields}
+              layout={activeLayout}
+              previewMode={previewMode}
+              onPreviewModeChange={setPreviewMode}
+              selectedFieldId={selectedFieldId}
+              draggingFieldId={draggingFieldId}
+              onFieldSelect={setSelectedFieldId}
+              onFieldDragStart={(fieldId) => {
+                setDraggingFieldId(fieldId);
+                setSelectedFieldId(fieldId);
+              }}
+              onFieldDragEnd={() => setDraggingFieldId(null)}
+              onFieldDrop={(targetFieldId) => {
+                if (draggingFieldId) {
+                  moveFieldTo(draggingFieldId, targetFieldId);
+                  setDraggingFieldId(null);
+                }
+              }}
+              onFieldRemove={removeField}
+              onFieldWidthSet={setFieldWidth}
+              getFieldWidthClass={fieldWidthClass}
+              styling={config.styling}
+              integrations={config.integrations}
+              formSettings={config.formSettings}
+              submitState={previewSubmitState}
+            />
+          </ResizablePanel>
+          <ResizableHandle withHandle className="builder-workspace-handle" />
+          <ResizablePanel
+            defaultSize={workspaceOrientation === "horizontal" ? 42 : 40}
+            minSize={workspaceOrientation === "horizontal" ? 28 : 24}
+          >
+            <BuilderExportPanel
+              copiedState={copiedState}
+              onCopy={copyText}
+              generatedFramerCode={generatedFramerCode}
+              generatedAppsScript={generatedAppsScript}
+              generatedSetup={generatedSetup}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
 
-      {activePanel ? (
-        <div className="builder-control-modal">
+      <Sheet open={Boolean(activePanel)} onOpenChange={(open) => !open && setActivePanel(null)}>
+        <SheetContent
+          side="bottom"
+          showCloseButton={false}
+          className="builder-control-modal-sheet"
+        >
+          {sheetMeta ? (
+            <>
+              <SheetTitle className="sr-only">{sheetMeta.title}</SheetTitle>
+              <SheetDescription className="sr-only">
+                {sheetMeta.description}
+              </SheetDescription>
+            </>
+          ) : null}
           <ControlSheet
             activePanel={activePanel}
             config={config}
@@ -182,8 +268,8 @@ export default function Home() {
             onClose={() => setActivePanel(null)}
             previewMode={previewMode}
           />
-        </div>
-      ) : null}
+        </SheetContent>
+      </Sheet>
 
       <Navigation
         activePanel={activePanel}

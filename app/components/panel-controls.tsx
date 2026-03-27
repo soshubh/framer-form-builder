@@ -1,6 +1,20 @@
 import type { HTMLInputTypeAttribute, ReactNode } from "react";
 
 import { BuilderSectionHeader } from "./section-header";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 export function BuilderSection({
   title,
@@ -14,10 +28,12 @@ export function BuilderSection({
   children: ReactNode;
 }) {
   return (
-    <section className="builder-card">
-      <BuilderSectionHeader title={title} description={description} action={action} />
-      {children}
-    </section>
+    <Card className="builder-card">
+      <CardHeader className="builder-card-header">
+        <BuilderSectionHeader title={title} description={description} action={action} />
+      </CardHeader>
+      <CardContent className="builder-card-content">{children}</CardContent>
+    </Card>
   );
 }
 
@@ -31,10 +47,10 @@ export function BuilderFieldControl({
   className?: string;
 }) {
   return (
-    <label className={className}>
-      <span>{label}</span>
+    <div className={className}>
+      <Label className="builder-field-label">{label}</Label>
       {children}
-    </label>
+    </div>
   );
 }
 
@@ -53,7 +69,12 @@ export function BuilderTextInput({
 }) {
   return (
     <BuilderFieldControl label={label} className={className}>
-      <input type={type} value={value} onChange={(event) => onChange(event.target.value)} />
+      <Input
+        className="builder-ui-input"
+        type={type}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
     </BuilderFieldControl>
   );
 }
@@ -73,7 +94,12 @@ export function BuilderTextarea({
 }) {
   return (
     <BuilderFieldControl label={label} className={className}>
-      <textarea rows={rows} value={value} onChange={(event) => onChange(event.target.value)} />
+      <Textarea
+        className="builder-ui-textarea"
+        rows={rows}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
     </BuilderFieldControl>
   );
 }
@@ -93,13 +119,18 @@ export function BuilderSelect({
 }) {
   return (
     <BuilderFieldControl label={label} className={className}>
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className="builder-ui-select">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </BuilderFieldControl>
   );
 }
@@ -117,7 +148,7 @@ export function BuilderCheckbox({
 }) {
   return (
     <label className={className}>
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
+      <Checkbox checked={checked} onCheckedChange={(next) => onChange(next === true)} />
       <span>{label}</span>
     </label>
   );
@@ -138,12 +169,12 @@ export function BuilderRange({
 }) {
   return (
     <BuilderFieldControl label={`${label}: ${value}px`}>
-      <input
-        type="range"
+      <Slider
+        className="builder-ui-slider"
         min={min}
         max={max}
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
+        value={[value]}
+        onValueChange={(next) => onChange(next[0] ?? value)}
       />
     </BuilderFieldControl>
   );
@@ -158,5 +189,10 @@ export function BuilderToggleCard({
   checked: boolean;
   onChange: (checked: boolean) => void;
 }) {
-  return <BuilderCheckbox label={label} checked={checked} onChange={onChange} className="builder-toggle" />;
+  return (
+    <label className="builder-toggle">
+      <Switch checked={checked} onCheckedChange={onChange} />
+      <span>{label}</span>
+    </label>
+  );
 }

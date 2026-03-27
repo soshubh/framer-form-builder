@@ -1,4 +1,5 @@
 import { BuilderSection } from "./panel-controls";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type ExportPanelProps = {
   copiedState: string;
@@ -34,7 +35,9 @@ export function BuilderExportPanel({
               {copiedState === "framer" ? "✓" : "⧉"}
             </button>
           </header>
-          <pre>{generatedFramerCode}</pre>
+          <ScrollArea className="builder-code-scroll">
+            <pre>{generatedFramerCode}</pre>
+          </ScrollArea>
         </article>
         <article className="builder-code-card">
           <header>
@@ -52,7 +55,9 @@ export function BuilderExportPanel({
               {copiedState === "script" ? "✓" : "⧉"}
             </button>
           </header>
-          <pre>{generatedAppsScript}</pre>
+          <ScrollArea className="builder-code-scroll">
+            <pre>{generatedAppsScript}</pre>
+          </ScrollArea>
         </article>
         <article className="builder-code-card">
           <header>
@@ -70,7 +75,9 @@ export function BuilderExportPanel({
               {copiedState === "setup" ? "✓" : "⧉"}
             </button>
           </header>
-          <pre>{generatedSetup}</pre>
+          <ScrollArea className="builder-code-scroll">
+            <pre>{generatedSetup}</pre>
+          </ScrollArea>
         </article>
       </div>
     </BuilderSection>

@@ -1,5 +1,12 @@
 import type { Dispatch, SetStateAction } from "react";
 import InfoOutlineRounded from "@mui/icons-material/InfoOutlineRounded";
+import { XIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 import {
   BuilderCheckbox,
@@ -42,14 +49,15 @@ export function ControlSheet({
   previewMode,
 }: ControlSheetProps) {
   const closeAction = (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="icon-sm"
       className="builder-section-close"
       aria-label="Close controls"
       onClick={onClose}
     >
-      ×
-    </button>
+      <XIcon />
+    </Button>
   );
 
   if (activePanel === "add") {
@@ -64,13 +72,19 @@ export function ControlSheet({
             <button key={item.type} type="button" className="builder-library-item" onClick={() => addField(item.type)}>
               <span className="builder-library-item-row">
                 <span>{item.label}</span>
-                <span
-                  className="builder-library-item-info"
-                  title={item.description}
-                  aria-label={item.description}
-                >
-                  <InfoOutlineRounded fontSize="inherit" />
-                </span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span
+                      className="builder-library-item-info"
+                      aria-label={item.description}
+                    >
+                      <InfoOutlineRounded fontSize="inherit" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" sideOffset={8}>
+                    {item.description}
+                  </TooltipContent>
+                </Tooltip>
               </span>
             </button>
           ))}

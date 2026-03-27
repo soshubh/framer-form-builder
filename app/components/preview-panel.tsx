@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import DragIndicatorRounded from "@mui/icons-material/DragIndicatorRounded";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { BuilderSection } from "./panel-controls";
 import { FORM_FIELD_COMPONENTS } from "./form/registry";
@@ -106,17 +107,17 @@ export function BuilderPreviewPanel({
       title="Live Preview"
       description="The right rail mirrors the builder state instead of a static mockup."
       action={
-        <div className="builder-segmented-control">
-          <button type="button" className={previewMode === "desktop" ? "is-active" : ""} onClick={() => onPreviewModeChange("desktop")}>
-            Desktop
-          </button>
-          <button type="button" className={previewMode === "tablet" ? "is-active" : ""} onClick={() => onPreviewModeChange("tablet")}>
-            Tablet
-          </button>
-          <button type="button" className={previewMode === "mobile" ? "is-active" : ""} onClick={() => onPreviewModeChange("mobile")}>
-            Mobile
-          </button>
-        </div>
+        <Tabs
+          value={previewMode}
+          onValueChange={(value) => onPreviewModeChange(value as PreviewMode)}
+          className="builder-device-tabs"
+        >
+          <TabsList className="builder-segmented-control">
+            <TabsTrigger value="desktop">Desktop</TabsTrigger>
+            <TabsTrigger value="tablet">Tablet</TabsTrigger>
+            <TabsTrigger value="mobile">Mobile</TabsTrigger>
+          </TabsList>
+        </Tabs>
       }
     >
       <div
