@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type CustomTextControlProps = {
   type?: "text" | "email" | "tel";
@@ -82,36 +82,69 @@ export function CustomSelectControl({
   options = [],
 }: CustomSelectControlProps) {
   const [value, setValue] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("pointerdown", handlePointerDown);
+    return () => window.removeEventListener("pointerdown", handlePointerDown);
+  }, [isMenuOpen]);
+
+  const handleOptionSelect = (option: string) => {
+    setValue(option);
+    setIsMenuOpen(false);
+  };
 
   return (
-    <div className="form-element-visual-control is-select">
-      <ControlSurface
-        value={value}
-        placeholder={placeholder ?? "Select an option"}
-        trailing={
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M7 10L12 15L17 10"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        }
-      />
-      <select
-        className="form-element-native-control is-select"
-        value={value}
-        onChange={(event) => setValue(event.target.value)}
+    <div ref={menuRef} className={`form-element-select-control${isMenuOpen ? " is-open" : ""}`}>
+      <button
+        type="button"
+        className="form-element-select-trigger"
+        onClick={() => setIsMenuOpen((current) => !current)}
       >
-        <option value="">{placeholder ?? "Select an option"}</option>
-        {options.map((option, index) => (
-          <option key={`${option}-${index}`} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
+        <ControlSurface
+          value={value}
+          placeholder={placeholder ?? "Select an option"}
+          trailing={
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M7 10L12 15L17 10"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+        />
+      </button>
+      {isMenuOpen ? (
+        <div className="form-element-select-menu">
+          {options.map((option, index) => (
+            <button
+              key={`${option}-${index}`}
+              type="button"
+              className={`form-element-select-option${option === value ? " is-active" : ""}`}
+              onClick={(event) => {
+                event.stopPropagation();
+                handleOptionSelect(option);
+              }}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

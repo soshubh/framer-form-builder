@@ -18,7 +18,7 @@ export type RightPanelTab =
   | SettingsTab;
 
 export type BuilderRightPanelProps = {
-  mode: "builder" | "code" | "settings";
+  mode: "builder" | "code" | "style" | "integrations";
   activeTab: RightPanelTab;
   config: BuilderConfig;
   copiedState: string;

@@ -1,0 +1,1035 @@
+/* ============================================================
+   page.module.css — Framer Forms exact replica
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+@font-face {
+  font-family: "GT Walsheim Framer Medium";
+  src: url("../gt-walsheim-font-family/GT-Walsheim-Medium-Trial-BF651b7fc728fb3.otf")
+    format("opentype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+.page {
+  position: relative;
+  display: block;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-padding-top: 72px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 56px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Framer "F" chevron logo */
+.brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+}
+
+.brandGlyph {
+  width: 20px;
+  height: 24px;
+  position: relative;
+  display: block;
+}
+
+.brandGlyph span {
+  display: block;
+  position: absolute;
+}
+
+.brandGlyph span:first-child {
+  width: 20px;
+  height: 12px;
+  background: #ffffff;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%, 0 0);
+  top: 0;
+  left: 0;
+}
+
+.brandGlyph span:last-child {
+  width: 10px;
+  height: 12px;
+  background: #ffffff;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 50%);
+  bottom: 0;
+  left: 0;
+}
+
+.topbarNav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  justify-content: center;
+}
+
+.topbarNavLink {
+  font-size: 13.5px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: color 0.12s ease;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.topbarNavLink:hover {
+  color: #ffffff;
+}
+
+.topbarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-width: 140px;
+  justify-content: flex-end;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 56px;
+  background: #000000;
+  overflow: hidden;
+}
+
+.hero,
+.learnSection,
+.featureStripSection,
+.storySection,
+.footerCta {
+  scroll-margin-top: 72px;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 100px 24px 48px;
+  max-width: 800px;
+  width: 100%;
+}
+
+/* ── The big headline — blue gradient exactly like Framer ── */
+.heroCopy h1 {
+  margin: 0 0 24px;
+  font-family:
+    "GT Walsheim Framer Medium",
+    "GT Walsheim Framer Medium Placeholder",
+    sans-serif;
+  font-size: 92px;
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  text-align: center;
+}
+
+.heroLine {
+  display: block;
+}
+
+/* solid blue fill words */
+.heroFill {
+  background: linear-gradient(135deg, #2196f3 0%, #64b5f6 60%, #1976d2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* slightly dimmer blue for "Forms," */
+.heroOutline {
+  color: transparent;
+  -webkit-text-stroke: 1.3px rgb(0, 102, 255);
+  text-stroke: 1.3px rgb(0, 102, 255);
+}
+
+.heroCopy p {
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 500px;
+  margin: 0 0 36px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.heroActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+  white-space: nowrap;
+  border: none;
+}
+
+.primaryButton:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  white-space: nowrap;
+}
+
+.secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.freeChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* ── Hero Stage ──────────────────────────────────────────── */
+.heroStage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.heroArtwork {
+  position: relative;
+  width: 100%;
+  max-width: 840px;
+  min-height: 132px;
+  background: transparent;
+  overflow: visible;
+}
+
+/* Hide old decorative divs */
+.heroGlow,
+.heroPlate,
+.heroOrb,
+.heroPill,
+.heroCube,
+.heroDiamond,
+.heroSpark {
+  display: none;
+}
+
+/* ── Learn Overlay labels ────────────────────────────────── */
+.learnOverlay {
+  position: relative;
+  top: auto;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  z-index: 4;
+}
+
+.learnColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.overlayLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.01em;
+}
+
+/* ── Learn Cards — bottom edge of artwork ────────────────── */
+.learnCards {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  display: flex;
+  gap: 10px;
+  z-index: 4;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.learnCard {
+  width: 88px;
+  height: 88px;
+  border-radius: 18px;
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+  cursor: pointer;
+}
+
+.learnCard:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.learnCardImage {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.learnCardLabels {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  display: flex;
+  gap: 10px;
+  z-index: 4;
+  margin-top: 8px;
+}
+
+.learnCardLabel {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.48);
+  width: 88px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.playMark {
+  font-size: 7px;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+/* Hide old device mock */
+.heroDevice,
+.heroDeviceTop,
+.heroDeviceCanvas {
+  display: none;
+}
+
+/* ============================================================
+   LEARN SECTION
+   ============================================================ */
+.learnSection {
+  margin-top: 96px;
+  padding: 80px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.learnIntro {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionEyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.sectionTitle {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.learnLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.learnPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.58);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.learnPill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================================
+   FEATURE STRIP
+   ============================================================ */
+.featureStripSection {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.featureStripCard {
+  padding: 36px 28px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.featureStripCard:last-child {
+  border-right: none;
+}
+
+.cardEyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.featureStripCard h2 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.featureStripCard p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.42);
+  margin: 0;
+  font-weight: 400;
+}
+
+.featureVisual {
+  margin-top: 16px;
+}
+
+/* ============================================================
+   STORY SECTION
+   ============================================================ */
+.storySection {
+  display: flex;
+  flex-direction: column;
+}
+
+.storyRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 560px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.storyRowReverse {
+  direction: rtl;
+}
+
+.storyRowReverse > * {
+  direction: ltr;
+}
+
+.storyCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 72px;
+  gap: 16px;
+}
+
+.storyCopy h2 {
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.18;
+}
+
+.storyCopy p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.48);
+  margin: 0;
+  max-width: 400px;
+}
+
+.storyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  width: fit-content;
+  margin-top: 4px;
+  transition: color 0.15s ease;
+}
+
+.storyLink:hover {
+  color: #ffffff;
+}
+
+.storyLink::after {
+  content: "→";
+  font-size: 13px;
+  transition: transform 0.15s ease;
+}
+
+.storyLink:hover::after {
+  transform: translateX(3px);
+}
+
+.storyVisual {
+  background: #060606;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  overflow: hidden;
+}
+
+.storyRowReverse .storyVisual {
+  border-left: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ============================================================
+   FOOTER CTA
+   ============================================================ */
+.footerCta {
+  padding: 100px 24px;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.footerCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  text-align: center;
+}
+
+.footerEyebrow {
+  font-size: clamp(28px, 4.5vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.footerActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ============================================================
+   MOCK PANELS
+   ============================================================ */
+.mockPanel {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.realBuilderSurface {
+  width: 100%;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.statePreviewGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.realBuilderButton {
+  margin-top: 4px;
+}
+
+.realBuilderInspector {
+  width: 100%;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+:global(.builder-app-config-group) {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+:global(.builder-app-config-group-title) {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+  margin-bottom: 10px;
+}
+
+:global(.builder-app-config-row) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+:global(.builder-app-config-row:last-child) {
+  margin-bottom: 0;
+}
+
+:global(.builder-app-config-row-label) {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.52);
+  font-weight: 400;
+}
+
+:global(.builder-app-config-select) {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.72);
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+:global(.builder-app-config-color-control) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+:global(.builder-app-config-input) {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.62);
+  outline: none;
+  padding: 3px 6px;
+  font-family: inherit;
+}
+
+:global(.builder-app-config-color-code) {
+  width: 68px;
+}
+:global(.builder-app-config-color-opacity) {
+  width: 34px;
+}
+
+:global(.builder-app-config-color-swatch) {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  flex-shrink: 0;
+}
+
+:global(.builder-app-config-color-swatch-fill) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.integrationCard {
+  width: 100%;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.integrationHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.statusPill {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.18);
+}
+
+.integrationFlow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+}
+
+.flowNode {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.58);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+.flowArrow {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.sheetPreview {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.sheetRow,
+.sheetRowMuted {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.sheetRow span {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.28);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sheetRowMuted span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.48);
+  font-weight: 400;
+}
+
+.componentCard {
+  width: 100%;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  display: flex;
+  overflow: hidden;
+}
+
+.componentSidebar {
+  width: 80px;
+  background: #080808;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.26);
+}
+
+.componentSidebar div:first-child {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.componentPreview {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.componentTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.componentSubtitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.38);
+  line-height: 1.4;
+}
+
+.mockInput {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.mockSubmit {
+  background: #ffffff;
+  color: #000000;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  width: fit-content;
+}
+
+.webhookCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.webhookBlock {
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.webhookTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.webhookText {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.36);
+  line-height: 1.5;
+}
+
+.flowArrowLarge {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.16);
+  text-align: center;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .featureStripSection {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .featureStripCard:nth-child(2) {
+    border-right: none;
+  }
+  .featureStripCard:nth-child(3) {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .featureStripCard:nth-child(4) {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: none;
+  }
+  .storyRow {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .storyRowReverse {
+    direction: ltr;
+  }
+  .storyCopy {
+    padding: 48px 32px;
+  }
+  .storyVisual {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    min-height: 280px;
+  }
+  .storyRowReverse .storyVisual {
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+}
+
+@media (max-width: 768px) {
+  .topbarNav {
+    display: none;
+  }
+  .heroCopy {
+    padding: 80px 24px 36px;
+  }
+  .learnCards {
+    display: none;
+  }
+  .learnCardLabels {
+    display: none;
+  }
+  .featureStripSection {
+    grid-template-columns: 1fr;
+  }
+  .featureStripCard {
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .featureStripCard:first-child {
+    border-top: none;
+  }
+  .storyCopy {
+    padding: 40px 24px;
+  }
+  .statePreviewGrid {
+    grid-template-columns: 1fr;
+  }
+}

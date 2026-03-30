@@ -2,8 +2,7 @@ import type { CSSProperties } from "react";
 
 import { PreviewDeviceTabs } from "./preview-device-tabs";
 import { FORM_FIELD_COMPONENTS } from "./form/registry";
-import { PrimaryButton } from "./form/button/PrimaryButton";
-import { SecondaryButton } from "./form/button/SecondaryButton";
+import { CustomActionButton } from "./form/button/custom-action-button";
 import type {
   FormActionButton,
   FormButtonState,
@@ -18,6 +17,81 @@ import {
   getFormPaddingValue,
   getInputPaddingValues,
 } from "../lib/builder-config";
+
+function getResolvedButtonPadding(
+  button: FormActionButton,
+  styling: StylingValues,
+) {
+  if (button.paddingMode === "individual") {
+    return {
+      top: button.paddingTop ?? styling.buttonPaddingTop,
+      right: button.paddingRight ?? styling.buttonPaddingRight,
+      bottom: button.paddingBottom ?? styling.buttonPaddingBottom,
+      left: button.paddingLeft ?? styling.buttonPaddingLeft,
+    };
+  }
+
+  if (typeof button.padding === "number") {
+    return {
+      top: button.padding,
+      right: button.padding,
+      bottom: button.padding,
+      left: button.padding,
+    };
+  }
+
+  return getButtonPaddingValues(styling);
+}
+
+function getResolvedButtonVariant(
+  button: FormActionButton,
+  styling: StylingValues & { buttonStyle: FormButtonStyle },
+) {
+  return button.variant ?? styling.buttonStyle;
+}
+
+function getResolvedButtonRadiusValue(
+  button: FormActionButton,
+  styling: StylingValues,
+) {
+  if (button.radiusMode === "individual") {
+    const topLeft = button.radiusTopLeft ?? styling.buttonRadius;
+    const topRight = button.radiusTopRight ?? styling.buttonRadius;
+    const bottomRight = button.radiusBottomRight ?? styling.buttonRadius;
+    const bottomLeft = button.radiusBottomLeft ?? styling.buttonRadius;
+    return `${topLeft}px ${topRight}px ${bottomRight}px ${bottomLeft}px`;
+  }
+
+  return `${button.radius ?? styling.buttonRadius}px`;
+}
+
+function getResolvedButtonSurfaceStyle(
+  button: FormActionButton,
+  styling: StylingValues & { buttonStyle: FormButtonStyle },
+) {
+  const padding = getResolvedButtonPadding(button, styling);
+  const variant = getResolvedButtonVariant(button, styling);
+  const borderColor = button.borderColor ?? styling.buttonBorderColor;
+  const textColor = button.textColor ?? styling.buttonTextColor;
+  const borderWidth = button.borderWidth ?? styling.buttonBorderWidth;
+  const textSize = button.textSize ?? styling.buttonTextSize;
+  const textWeight = button.textWeight ?? styling.buttonTextWeight;
+  const fillColor = button.fillColor ?? styling.primaryColor;
+
+  return {
+    "--preview-button-padding-top": `${padding.top}px`,
+    "--preview-button-padding-right": `${padding.right}px`,
+    "--preview-button-padding-bottom": `${padding.bottom}px`,
+    "--preview-button-padding-left": `${padding.left}px`,
+    "--preview-button-radius": getResolvedButtonRadiusValue(button, styling),
+    "--preview-button-border-width": `${borderWidth}px`,
+    "--preview-button-border-color": borderColor,
+    "--preview-button-text-color": textColor,
+    "--preview-primary": fillColor,
+    "--preview-button-text-size": `${textSize}px`,
+    "--preview-button-text-weight": textWeight,
+  } as CSSProperties;
+}
 
 type BuilderCenterPanelProps = {
   fields: Field[];
@@ -119,6 +193,7 @@ export function BuilderCenterPanel({
               "--preview-field-radius": `${styling.fieldRadius}px`,
               "--preview-button-radius": `${styling.buttonRadius}px`,
               "--preview-button-border-width": `${styling.buttonBorderWidth}px`,
+              "--preview-control-icon-size": `${Math.max(styling.inputTextSize * 0.9, 10)}px`,
             } as CSSProperties
           }
         >
@@ -168,29 +243,18 @@ export function BuilderCenterPanel({
                     }`}
                     onClick={() => onButtonSelect(button.id)}
                   >
-                    {styling.buttonStyle === "outline" ? (
-                      <SecondaryButton
-                        label={button.label}
-                        state={buttonState}
-                        actionType={button.type}
-                        isLabelVisible={button.isLabelVisible}
-                        isLeftIconVisible={button.isLeftIconVisible}
-                        isRightIconVisible={button.isRightIconVisible}
-                        leftIcon={button.leftIcon}
-                        rightIcon={button.rightIcon}
-                      />
-                    ) : (
-                      <PrimaryButton
-                        label={button.label}
-                        state={buttonState}
-                        actionType={button.type}
-                        isLabelVisible={button.isLabelVisible}
-                        isLeftIconVisible={button.isLeftIconVisible}
-                        isRightIconVisible={button.isRightIconVisible}
-                        leftIcon={button.leftIcon}
-                        rightIcon={button.rightIcon}
-                      />
-                    )}
+                    <CustomActionButton
+                      variant={getResolvedButtonVariant(button, styling)}
+                      style={getResolvedButtonSurfaceStyle(button, styling)}
+                      label={button.label}
+                      state={buttonState}
+                      actionType={button.type}
+                      isLabelVisible={button.isLabelVisible}
+                      isLeftIconVisible={button.isLeftIconVisible}
+                      isRightIconVisible={button.isRightIconVisible}
+                      leftIcon={button.leftIcon}
+                      rightIcon={button.rightIcon}
+                    />
                   </div>
                 );
               })}

@@ -1,8 +1,8 @@
 import { SystemButton } from "./system-button";
 
 type BuilderTopbarProps = {
-  activeTab: "builder" | "code" | "settings";
-  onTabChange: (tab: "builder" | "code" | "settings") => void;
+  activeTab: "builder" | "code" | "style" | "integrations";
+  onTabChange: (tab: "builder" | "code" | "style" | "integrations") => void;
   onNewForm: () => void;
 };
 
@@ -40,10 +40,17 @@ export function BuilderTopbar({
         </button>
         <button
           type="button"
-          className={`builder-app-topbar-tab ${activeTab === "settings" ? "is-active" : ""}`}
-          onClick={() => onTabChange("settings")}
+          className={`builder-app-topbar-tab ${activeTab === "style" ? "is-active" : ""}`}
+          onClick={() => onTabChange("style")}
         >
-          Settings
+          Style
+        </button>
+        <button
+          type="button"
+          className={`builder-app-topbar-tab ${activeTab === "integrations" ? "is-active" : ""}`}
+          onClick={() => onTabChange("integrations")}
+        >
+          Integrations
         </button>
       </div>
 

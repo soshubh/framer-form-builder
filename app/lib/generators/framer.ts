@@ -14,6 +14,10 @@ function toPascalCase(value: string) {
     .join("");
 }
 
+function getPhoneCountryCodeValueExpression(fieldId: string) {
+  return `String(values["${fieldId}"] || "")`;
+}
+
 export function generateFramerComponent(config: BuilderConfig) {
   const desktopStyling = resolveStylingForPreview(config.styling, "desktop");
   const tabletStyling = resolveStylingForPreview(config.styling, "tablet");
@@ -96,7 +100,7 @@ export function generateFramerComponent(config: BuilderConfig) {
     ? `
     if (otpUrl) {
       const otpParams = new URLSearchParams()
-      otpParams.append("phone", ${phoneFieldId ? `String(values["${phoneFieldId}"] || "")` : `""`})
+      otpParams.append("phone", ${phoneFieldId ? getPhoneCountryCodeValueExpression(phoneFieldId) : `""`})
       otpParams.append("email", ${emailFieldId ? `String(values["${emailFieldId}"] || "")` : `""`})
       await postToWebhook(otpUrl, otpParams, "OTP")
     }`
@@ -161,6 +165,105 @@ function buildWebhookParams(payload) {
   return params
 }
 
+function getPhoneCountryCodeKey(fieldId) {
+  return fieldId + "__countryCode"
+}
+
+function getPhoneLocalNumberKey(fieldId) {
+  return fieldId + "__local"
+}
+
+function getPhoneFieldValue(countryCode, localNumber) {
+  const sanitizedCountryCode = String(countryCode || "").trim()
+  const sanitizedLocalNumber = String(localNumber || "").trim()
+
+  if (!sanitizedLocalNumber) {
+    return ""
+  }
+
+  return [sanitizedCountryCode, sanitizedLocalNumber].filter(Boolean).join(" ")
+}
+
+function createInitialValues(fields) {
+  const initialValues = {}
+
+  fields.forEach((field) => {
+    initialValues[field.id] = field.type === "checkbox" ? [] : ""
+
+    if (field.type === "phone") {
+      initialValues[getPhoneCountryCodeKey(field.id)] = field.phoneCountryCode || "+91"
+      initialValues[getPhoneLocalNumberKey(field.id)] = ""
+    }
+  })
+
+  return initialValues
+}
+
+function getRequiredFieldMessage(field) {
+  if (field.type === "select") {
+    return field.validationMessage || \`Please select \${String(field.label || "an option").toLowerCase()}.\`
+  }
+
+  if (field.type === "radio") {
+    return field.validationMessage || \`Please select one \${String(field.label || "option").toLowerCase()}.\`
+  }
+
+  if (field.type === "checkbox") {
+    return field.validationMessage || \`Please select at least one \${String(field.label || "option").toLowerCase()}.\`
+  }
+
+  return \`\${field.label || "This field"} is required.\`
+}
+
+function validateField(field, values) {
+  const value = values[field.id]
+
+  if (field.type === "checkbox") {
+    const selectedValues = Array.isArray(value) ? value : []
+
+    if (field.required && selectedValues.length === 0) {
+      return getRequiredFieldMessage(field)
+    }
+
+    return ""
+  }
+
+  if (field.type === "phone") {
+    const localNumber = String(values[getPhoneLocalNumberKey(field.id)] || "").trim()
+
+    if (field.required && !localNumber) {
+      return getRequiredFieldMessage(field)
+    }
+
+    if (localNumber && localNumber.length !== 10) {
+      return field.validationMessage || "Please enter a valid phone number."
+    }
+
+    return ""
+  }
+
+  const normalizedValue = typeof value === "string" ? value.trim() : value
+
+  if (field.required) {
+    const isEmpty =
+      normalizedValue === "" ||
+      normalizedValue === null ||
+      normalizedValue === undefined
+
+    if (isEmpty) {
+      return getRequiredFieldMessage(field)
+    }
+  }
+
+  if (field.type === "email" && normalizedValue) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(normalizedValue))) {
+      return field.validationMessage || "Please enter a valid email address."
+    }
+  }
+
+  return ""
+}
+
 function getFormPadding(props) {
   if (props.formPaddingMode === "individual") {
     return \`\${props.formPaddingTop}px \${props.formPaddingRight}px \${props.formPaddingBottom}px \${props.formPaddingLeft}px\`
@@ -187,13 +290,22 @@ function getInputPadding(props) {
   }
 }
 
-function getButtonPadding(props) {
-  if (props.buttonPaddingMode === "individual") {
+function getButtonPadding(button, props) {
+  if (button.paddingMode === "individual") {
     return {
-      top: props.buttonPaddingTop,
-      right: props.buttonPaddingRight,
-      bottom: props.buttonPaddingBottom,
-      left: props.buttonPaddingLeft,
+      top: button.paddingTop ?? props.buttonPaddingTop,
+      right: button.paddingRight ?? props.buttonPaddingRight,
+      bottom: button.paddingBottom ?? props.buttonPaddingBottom,
+      left: button.paddingLeft ?? props.buttonPaddingLeft,
+    }
+  }
+
+  if (typeof button.padding === "number") {
+    return {
+      top: button.padding,
+      right: button.padding,
+      bottom: button.padding,
+      left: button.padding,
     }
   }
 
@@ -209,13 +321,17 @@ function getInputSurfaceStyle(props, options = {}) {
   const inputPadding = getInputPadding(props)
   const topPadding = options.isTextarea ? inputPadding.top + 3 : inputPadding.top
   const borderWidth = options.isFocused ? props.fieldFocusWidth : props.fieldBorderWidth
+  const controlIconSize = Math.max(props.inputTextSize * 0.9, 10)
+  const controlContentHeight = Math.max(props.inputTextSize * 1.2, controlIconSize)
 
   return {
     position: "relative",
     display: "flex",
     alignItems: options.isTextarea ? "flex-start" : "center",
     width: "100%",
-    ...(options.isTextarea ? { minHeight: 132 } : {}),
+    ...(options.isTextarea
+      ? { minHeight: 132 }
+      : { minHeight: inputPadding.top + inputPadding.bottom + controlContentHeight }),
     padding: \`\${topPadding}px \${inputPadding.right}px \${inputPadding.bottom}px \${inputPadding.left}px\`,
     ...(options.hasTrailing ? { paddingRight: inputPadding.right + 28 } : {}),
     borderRadius: props.fieldRadius,
@@ -251,6 +367,157 @@ function getNativeInputStyle(props, options = {}) {
   }
 }
 
+function getPhoneFieldLayoutStyle() {
+  return {
+    display: "grid",
+    gridTemplateColumns: "max-content minmax(0, 1fr)",
+    gap: 0,
+    width: "100%",
+  }
+}
+
+function getDirectInputStyle(props, options = {}) {
+  const inputPadding = getInputPadding(props)
+  const borderWidth = options.isFocused ? props.fieldFocusWidth : props.fieldBorderWidth
+  const controlIconSize = Math.max(props.inputTextSize * 0.9, 10)
+  const controlContentHeight = Math.max(props.inputTextSize * 1.2, controlIconSize)
+
+  return {
+    width: "100%",
+    minHeight: inputPadding.top + inputPadding.bottom + controlContentHeight,
+    borderRadius: props.fieldRadius,
+    border: \`\${borderWidth}px solid \${options.isFocused ? props.fieldFocusColor : props.fieldBorderColor}\`,
+    background: props.fieldSurfaceColor,
+    padding: \`\${inputPadding.top}px \${inputPadding.right}px \${inputPadding.bottom}px \${inputPadding.left}px\`,
+    color: props.fieldTextColor,
+    fontFamily: "inherit",
+    fontSize: props.inputTextSize,
+    fontWeight: props.inputTextWeight,
+    lineHeight: 1.2,
+    outline: "none",
+    boxSizing: "border-box",
+  }
+}
+
+function getPhoneCodeStaticStyle(props, options = {}) {
+  const inputPadding = getInputPadding(props)
+
+  return {
+    ...getInputSurfaceStyle(props, { isFocused: options.isFocused }),
+    display: "inline-flex",
+    width: "max-content",
+    paddingLeft: inputPadding.left,
+    paddingRight: inputPadding.right,
+    justifyContent: "center",
+    whiteSpace: "nowrap",
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  }
+}
+
+function getPhoneNumberSurfaceStyle(props, options = {}) {
+  return {
+    ...getInputSurfaceStyle(props, options),
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+    borderLeft: "0",
+  }
+}
+
+function getPhoneNumberInputStyle(props) {
+  return {
+    ...getNativeInputStyle(props),
+    paddingLeft: \`calc(\${getInputPadding(props).left}px + 1px)\`,
+  }
+}
+
+function getPhoneCodeTriggerStyle() {
+  return {
+    display: "block",
+    width: "100%",
+    padding: 0,
+    border: 0,
+    background: "transparent",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    textAlign: "left",
+  }
+}
+
+function getPhoneCodeMenuStyle(props) {
+  return {
+    position: "absolute",
+    top: "calc(100% - 1px)",
+    left: 0,
+    zIndex: 40,
+    display: "grid",
+    width: "max-content",
+    minWidth: "max-content",
+    padding: 4,
+    border: \`1px solid \${props.fieldBorderColor}\`,
+    borderRadius: props.fieldRadius,
+    background: props.fieldSurfaceColor,
+    boxShadow: "0 12px 28px rgb(0 0 0 / 0.28)",
+  }
+}
+
+function getPhoneCodeOptionStyle(props, isActive) {
+  const inputPadding = getInputPadding(props)
+
+  return {
+    padding: \`\${inputPadding.top}px \${inputPadding.right}px \${inputPadding.bottom}px \${inputPadding.left}px\`,
+    border: 0,
+    borderRadius: Math.max(props.fieldRadius - 4, 0),
+    background: isActive ? "rgb(255 255 255 / 0.06)" : "transparent",
+    color: props.fieldTextColor,
+    fontFamily: "inherit",
+    fontSize: props.inputTextSize,
+    fontWeight: props.inputTextWeight,
+    lineHeight: 1.2,
+    textAlign: "left",
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+  }
+}
+
+function getDropdownMenuStyle(props) {
+  return {
+    position: "absolute",
+    top: "calc(100% + 1px)",
+    left: 0,
+    right: 0,
+    zIndex: 40,
+    display: "grid",
+    padding: 4,
+    border: \`1px solid \${props.fieldBorderColor}\`,
+    borderRadius: props.fieldRadius,
+    background: props.fieldSurfaceColor,
+    fontFamily: "inherit",
+    fontSize: props.inputTextSize,
+    fontWeight: props.inputTextWeight,
+    lineHeight: 1.2,
+    boxShadow: "0 12px 28px rgb(0 0 0 / 0.28)",
+  }
+}
+
+function getDropdownOptionStyle(props, isActive) {
+  const inputPadding = getInputPadding(props)
+
+  return {
+    padding: \`\${inputPadding.top}px \${inputPadding.right}px \${inputPadding.bottom}px \${inputPadding.left}px\`,
+    border: 0,
+    borderRadius: Math.max(props.fieldRadius - 4, 0),
+    background: isActive ? "rgb(255 255 255 / 0.06)" : "transparent",
+    color: props.fieldTextColor,
+    fontFamily: "inherit",
+    fontSize: props.inputTextSize,
+    fontWeight: props.inputTextWeight,
+    lineHeight: 1.2,
+    textAlign: "left",
+    cursor: "pointer",
+  }
+}
+
 function getChoiceStyle(props) {
   const inputPadding = getInputPadding(props)
 
@@ -279,33 +546,49 @@ function getButtonRootStyle() {
   }
 }
 
-function getButtonSurfaceStyle(props) {
-  const buttonPadding = getButtonPadding(props)
+function getButtonSurfaceStyle(button, props) {
+  const buttonPadding = getButtonPadding(button, props)
+  const buttonVariant = button.variant || props.buttonVariant
+  const buttonRadius =
+    button.radiusMode === "individual"
+      ? [
+          String(button.radiusTopLeft ?? props.buttonRadius) + "px",
+          String(button.radiusTopRight ?? props.buttonRadius) + "px",
+          String(button.radiusBottomRight ?? props.buttonRadius) + "px",
+          String(button.radiusBottomLeft ?? props.buttonRadius) + "px",
+        ].join(" ")
+      : String(button.radius ?? props.buttonRadius) + "px"
+  const buttonTextSize = button.textSize ?? props.buttonTextSize
+  const buttonTextWeight = button.textWeight ?? props.buttonTextWeight
+  const buttonBorderWidth = button.borderWidth ?? props.buttonBorderWidth
+  const buttonBorderColor = button.borderColor ?? props.buttonBorderColor
+  const buttonTextColor = button.textColor ?? props.buttonTextColor
+  const buttonFillColor = button.fillColor ?? props.primaryColor
   const shared = {
     width: "100%",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: props.buttonRadius,
-    fontSize: props.buttonTextSize,
-    fontWeight: props.buttonTextWeight,
+    borderRadius: buttonRadius,
+    fontSize: buttonTextSize,
+    fontWeight: buttonTextWeight,
     lineHeight: 1.2,
     padding: \`\${buttonPadding.top}px \${buttonPadding.right}px \${buttonPadding.bottom}px \${buttonPadding.left}px\`,
     boxSizing: "border-box",
   }
 
-  return props.buttonVariant === "outline"
+  return buttonVariant === "outline"
     ? {
         ...shared,
-        border: \`\${props.buttonBorderWidth}px solid \${props.buttonBorderColor}\`,
-        color: props.buttonTextColor,
+        border: \`\${buttonBorderWidth}px solid \${buttonBorderColor}\`,
+        color: buttonTextColor,
         background: "transparent",
       }
     : {
         ...shared,
-        border: \`\${props.buttonBorderWidth}px solid \${props.buttonBorderColor}\`,
-        color: props.buttonTextColor,
-        background: props.primaryColor,
+        border: \`\${buttonBorderWidth}px solid \${buttonBorderColor}\`,
+        color: buttonTextColor,
+        background: buttonFillColor,
       }
 }
 
@@ -417,7 +700,7 @@ function ButtonIcon({ icon, size = 18 }) {
 
 function ChevronIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M7 10L12 15L17 10"
         stroke="currentColor"
@@ -432,10 +715,10 @@ function ChevronIcon() {
 function getButtonContent(button, label, props) {
   const leftIcon = button.leftIcon || (button.type === "back" ? "arrowBack" : button.type === "otp" ? "lock" : "send")
   const rightIcon = button.rightIcon || "arrowForward"
-  const iconSize = props.buttonTextSize + 5
+  const iconSize = (button.textSize ?? props.buttonTextSize) + 5
 
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: props.buttonTextSize, lineHeight: 1.2 }}>
+    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: button.textSize ?? props.buttonTextSize, lineHeight: 1.2 }}>
       {button.isLeftIconVisible === true ? <ButtonIcon icon={leftIcon} size={iconSize} /> : null}
       {button.isLabelVisible !== false ? <span>{label}</span> : null}
       {button.isRightIconVisible === true ? <ButtonIcon icon={rightIcon} size={iconSize} /> : null}
@@ -443,7 +726,7 @@ function getButtonContent(button, label, props) {
   )
 }
 
-function FieldShell({ label, required, isLabelVisible, isRequiredVisible, message, isHelperTextVisible, children, props }) {
+function FieldShell({ label, required, isLabelVisible, isRequiredVisible, errorMessage, children, props }) {
   return (
     <label style={{ display: "grid", gap: 8 }}>
       {isLabelVisible !== false ? (
@@ -452,21 +735,20 @@ function FieldShell({ label, required, isLabelVisible, isRequiredVisible, messag
         </span>
       ) : null}
       {children}
-      {message && isHelperTextVisible !== false ? (
-        <span style={{ color: props.fieldHelperColor, fontSize: props.helperSize, fontWeight: props.helperWeight }}>{message}</span>
+      {errorMessage ? (
+        <span style={{ color: props.fieldHelperColor, fontSize: props.helperSize, fontWeight: props.helperWeight }}>{errorMessage}</span>
       ) : null}
     </label>
   )
 }`,
-    `function InputField({ field, value, onChange, onFocus, onBlur, isFocused, props, type = "text" }) {
+    `function InputField({ field, value, onChange, onFocus, onBlur, isFocused, errorMessage, props, type = "text" }) {
   return (
     <FieldShell
       label={field.label}
       required={field.required}
       isLabelVisible={field.isLabelVisible}
       isRequiredVisible={field.isRequiredVisible}
-      message={field.validationMessage}
-      isHelperTextVisible={field.isHelperTextVisible}
+      errorMessage={errorMessage}
       props={props}
     >
       <div style={{ position: "relative" }}>
@@ -488,15 +770,14 @@ function FieldShell({ label, required, isLabelVisible, isRequiredVisible, messag
     </FieldShell>
   )
 }`,
-    `function TextareaField({ field, value, onChange, onFocus, onBlur, isFocused, props }) {
+    `function TextareaField({ field, value, onChange, onFocus, onBlur, isFocused, errorMessage, props }) {
   return (
     <FieldShell
       label={field.label}
       required={field.required}
       isLabelVisible={field.isLabelVisible}
       isRequiredVisible={field.isRequiredVisible}
-      message={field.validationMessage}
-      isHelperTextVisible={field.isHelperTextVisible}
+      errorMessage={errorMessage}
       props={props}
     >
       <div style={{ position: "relative" }}>
@@ -517,51 +798,183 @@ function FieldShell({ label, required, isLabelVisible, isRequiredVisible, messag
     </FieldShell>
   )
 }`,
-    `function DropdownField({ field, value, onChange, onFocus, onBlur, isFocused, props }) {
+    `function DropdownField({ field, value, onChange, onFocus, onBlur, isFocused, errorMessage, props }) {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+  const menuRef = React.useRef(null)
+
+  React.useEffect(() => {
+    if (!isMenuOpen) {
+      return
+    }
+
+    const handlePointerDown = (event) => {
+      if (!menuRef.current || menuRef.current.contains(event.target)) {
+        return
+      }
+
+      setIsMenuOpen(false)
+    }
+
+    window.addEventListener("pointerdown", handlePointerDown)
+    return () => window.removeEventListener("pointerdown", handlePointerDown)
+  }, [isMenuOpen])
+
+  const handleOptionSelect = (option) => {
+    onChange(field.id, option)
+    setIsMenuOpen(false)
+  }
+
   return (
     <FieldShell
       label={field.label}
       required={field.required}
       isLabelVisible={field.isLabelVisible}
       isRequiredVisible={field.isRequiredVisible}
-      message={field.validationMessage}
-      isHelperTextVisible={field.isHelperTextVisible}
+      errorMessage={errorMessage}
       props={props}
     >
-      <div style={{ position: "relative" }}>
-        <div aria-hidden="true" style={getInputSurfaceStyle(props, { isPlaceholder: !value, hasTrailing: true, isFocused })}>
-          <span style={{ display: "block", width: "100%", fontSize: props.inputTextSize, fontWeight: props.inputTextWeight, lineHeight: 1.2, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-            {value || (field.placeholder ?? "Select an option")}
-          </span>
-          <span style={{ position: "absolute", top: "50%", right: getInputPadding(props).right, display: "inline-flex", alignItems: "center", justifyContent: "center", color: props.fieldLabelColor, transform: "translateY(-50%)" }}>
-            <ChevronIcon />
-          </span>
-        </div>
-        <select
-          value={value}
-          onChange={(event) => onChange(field.id, event.target.value)}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          style={getNativeInputStyle(props, { isSelect: true })}
-        >
-          <option value="">{field.placeholder ?? "Select an option"}</option>
-          {(field.options || []).map((option) => (
-            <option key={option} value={option}>{option}</option>
-          ))}
-        </select>
+      <div ref={menuRef} style={{ position: "relative" }}>
+        <button type="button" onClick={() => setIsMenuOpen((current) => !current)} style={getPhoneCodeTriggerStyle()}>
+          <div aria-hidden="true" style={getInputSurfaceStyle(props, { isPlaceholder: !value, hasTrailing: true, isFocused })}>
+            <span style={{ display: "block", width: "100%", fontSize: props.inputTextSize, fontWeight: props.inputTextWeight, lineHeight: 1.2, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+              {value || (field.placeholder ?? "Select an option")}
+            </span>
+            <span style={{ position: "absolute", top: "50%", right: getInputPadding(props).right, display: "inline-flex", alignItems: "center", justifyContent: "center", width: Math.max(props.inputTextSize * 0.9, 10), height: Math.max(props.inputTextSize * 0.9, 10), flex: \`0 0 \${Math.max(props.inputTextSize * 0.9, 10)}px\`, color: props.fieldLabelColor, transform: "translateY(-50%)" }}>
+              <ChevronIcon />
+            </span>
+          </div>
+        </button>
+        {isMenuOpen ? (
+          <div style={getDropdownMenuStyle(props)}>
+            {(field.options || []).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  handleOptionSelect(option)
+                }}
+                style={getDropdownOptionStyle(props, option === value)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
     </FieldShell>
   )
 }`,
-    `function RadioField({ field, value, onChange, props }) {
+    `function PhoneField({ field, values, onPhoneChange, onFocus, onBlur, isFocused, errorMessage, props }) {
+  const countryCodeKey = getPhoneCountryCodeKey(field.id)
+  const localNumberKey = getPhoneLocalNumberKey(field.id)
+  const countryCode = String(values[countryCodeKey] || field.phoneCountryCode || "+91")
+  const localNumber = String(values[localNumberKey] || "")
+  const [isCodeMenuOpen, setIsCodeMenuOpen] = React.useState(false)
+  const codeMenuRef = React.useRef(null)
+  const countryCodeMode = field.phoneCountryCodeMode || "fixed"
+  const countryCodeOptions =
+    field.phoneCountryCodeOptions && field.phoneCountryCodeOptions.length > 0
+      ? field.phoneCountryCodeOptions
+      : ["+1", "+44", "+61", "+91"]
+
+  React.useEffect(() => {
+    if (!isCodeMenuOpen) {
+      return
+    }
+
+    const handlePointerDown = (event) => {
+      if (!codeMenuRef.current || codeMenuRef.current.contains(event.target)) {
+        return
+      }
+
+      setIsCodeMenuOpen(false)
+    }
+
+    window.addEventListener("pointerdown", handlePointerDown)
+    return () => window.removeEventListener("pointerdown", handlePointerDown)
+  }, [isCodeMenuOpen])
+
+  const handleCountryCodeSelect = (option) => {
+    onPhoneChange(field, { countryCode: option })
+    setIsCodeMenuOpen(false)
+  }
+
   return (
     <FieldShell
       label={field.label}
       required={field.required}
       isLabelVisible={field.isLabelVisible}
       isRequiredVisible={field.isRequiredVisible}
-      message={field.validationMessage}
-      isHelperTextVisible={field.isHelperTextVisible}
+      errorMessage={errorMessage}
+      props={props}
+    >
+      <div style={getPhoneFieldLayoutStyle()}>
+        {countryCodeMode === "dropdown" ? (
+          <div ref={codeMenuRef} style={{ position: "relative", width: "max-content", justifySelf: "start" }}>
+            <button type="button" onClick={() => setIsCodeMenuOpen((current) => !current)} style={getPhoneCodeTriggerStyle()}>
+              <div aria-hidden="true" style={{ ...getInputSurfaceStyle(props, { isFocused }), display: "inline-flex", width: "auto", paddingLeft: getInputPadding(props).left, paddingRight: 4, borderTopRightRadius: 0, borderBottomRightRadius: 0 }}>
+                <span style={{ display: "block", width: "auto", flex: "0 0 auto", fontSize: props.inputTextSize, fontWeight: props.inputTextWeight, lineHeight: 1.2, textAlign: "center" }}>
+                  {countryCode}
+                </span>
+                <span style={{ position: "static", display: "inline-flex", alignItems: "center", justifyContent: "center", width: Math.max(props.inputTextSize * 0.9, 10), height: Math.max(props.inputTextSize * 0.9, 10), flex: \`0 0 \${Math.max(props.inputTextSize * 0.9, 10)}px\`, marginLeft: 4, color: props.fieldLabelColor }}>
+                  <ChevronIcon />
+                </span>
+              </div>
+            </button>
+            {isCodeMenuOpen ? (
+              <div style={getPhoneCodeMenuStyle(props)}>
+                {countryCodeOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      handleCountryCodeSelect(option)
+                    }}
+                    style={getPhoneCodeOptionStyle(props, option === countryCode)}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <div aria-hidden="true" style={getPhoneCodeStaticStyle(props, { isFocused })}>
+            <span style={{ display: "block", width: "auto", flex: "0 0 auto", fontSize: props.inputTextSize, fontWeight: props.inputTextWeight, lineHeight: 1.2, textAlign: "center" }}>
+              {countryCode}
+            </span>
+          </div>
+        )}
+        <div style={{ position: "relative" }}>
+          <div aria-hidden="true" style={getPhoneNumberSurfaceStyle(props, { isPlaceholder: !localNumber, isFocused })}>
+            <span style={{ display: "block", width: "100%", fontSize: props.inputTextSize, fontWeight: props.inputTextWeight, lineHeight: 1.2, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+              {localNumber || field.placeholder || "\u00A0"}
+            </span>
+          </div>
+          <input
+            type="tel"
+            value={localNumber}
+            onChange={(event) => onPhoneChange(field, { localNumber: event.target.value.replace(/\\D/g, "").slice(0, 10) })}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            placeholder=""
+            style={getPhoneNumberInputStyle(props)}
+          />
+        </div>
+      </div>
+    </FieldShell>
+  )
+}`,
+    `function RadioField({ field, value, onChange, errorMessage, props }) {
+  return (
+    <FieldShell
+      label={field.label}
+      required={field.required}
+      isLabelVisible={field.isLabelVisible}
+      isRequiredVisible={field.isRequiredVisible}
+      errorMessage={errorMessage}
       props={props}
     >
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
@@ -580,7 +993,7 @@ function FieldShell({ label, required, isLabelVisible, isRequiredVisible, messag
     </FieldShell>
   )
 }`,
-    `function CheckboxField({ field, value, onChange, props }) {
+    `function CheckboxField({ field, value, onChange, errorMessage, props }) {
   const selectedValues = Array.isArray(value) ? value : []
   const options = field.options && field.options.length > 0 ? field.options : [field.label]
 
@@ -590,8 +1003,7 @@ function FieldShell({ label, required, isLabelVisible, isRequiredVisible, messag
       required={field.required}
       isLabelVisible={field.isLabelVisible}
       isRequiredVisible={field.isRequiredVisible}
-      message={field.validationMessage}
-      isHelperTextVisible={field.isHelperTextVisible}
+      errorMessage={errorMessage}
       props={props}
     >
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
@@ -616,22 +1028,22 @@ function FieldShell({ label, required, isLabelVisible, isRequiredVisible, messag
     </FieldShell>
   )
 }`,
-    `function renderField(field, value, onChange, isFocused, onFocus, onBlur, props) {
+    `function renderField(field, value, onChange, isFocused, onFocus, onBlur, errorMessage, props) {
   switch (field.type) {
     case "text":
-      return <InputField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} props={props} />
+      return <InputField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} errorMessage={errorMessage} props={props} />
     case "email":
-      return <InputField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} props={props} type="email" />
+      return <InputField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} errorMessage={errorMessage} props={props} type="email" />
     case "phone":
-      return <InputField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} props={props} type="tel" />
+      return <PhoneField field={field} values={value} onPhoneChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} errorMessage={errorMessage} props={props} />
     case "textarea":
-      return <TextareaField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} props={props} />
+      return <TextareaField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} errorMessage={errorMessage} props={props} />
     case "select":
-      return <DropdownField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} props={props} />
+      return <DropdownField field={field} value={value} onChange={onChange} onFocus={onFocus} onBlur={onBlur} isFocused={isFocused} errorMessage={errorMessage} props={props} />
     case "radio":
-      return <RadioField field={field} value={value} onChange={onChange} props={props} />
+      return <RadioField field={field} value={value} onChange={onChange} errorMessage={errorMessage} props={props} />
     case "checkbox":
-      return <CheckboxField field={field} value={value} onChange={onChange} props={props} />
+      return <CheckboxField field={field} value={value} onChange={onChange} errorMessage={errorMessage} props={props} />
     default:
       return null
   }
@@ -733,9 +1145,8 @@ function getLayoutForViewport(props, viewportWidth) {
 }
 
 export default function ${componentName}(props) {
-  const [values, setValues] = React.useState(() =>
-    Object.fromEntries(fields.map((field) => [field.id, field.type === "checkbox" ? [] : ""]))
-  )
+  const [values, setValues] = React.useState(() => createInitialValues(fields))
+  const [errors, setErrors] = React.useState({})
   const [submitState, setSubmitState] = React.useState("idle")
   const [focusedFieldId, setFocusedFieldId] = React.useState(null)
   const [viewportWidth, setViewportWidth] = React.useState(() => getViewportWidth())
@@ -745,8 +1156,84 @@ export default function ${componentName}(props) {
   const redirectUrl = props.redirectUrl || ""
 
   const handleChange = React.useCallback((fieldId, nextValue) => {
-    setValues((current) => ({ ...current, [fieldId]: nextValue }))
+    setValues((current) => {
+      const nextValues = { ...current, [fieldId]: nextValue }
+      const field = fields.find((candidate) => candidate.id === fieldId)
+
+      if (field) {
+        setErrors((currentErrors) => {
+          if (!currentErrors[fieldId]) {
+            return currentErrors
+          }
+
+          const nextError = validateField(field, nextValues)
+
+          if (!nextError) {
+            const nextErrors = { ...currentErrors }
+            delete nextErrors[fieldId]
+            return nextErrors
+          }
+
+          return { ...currentErrors, [fieldId]: nextError }
+        })
+      }
+
+      return nextValues
+    })
   }, [])
+
+  const handlePhoneChange = React.useCallback((field, patch) => {
+    setValues((current) => {
+      const countryCodeKey = getPhoneCountryCodeKey(field.id)
+      const localNumberKey = getPhoneLocalNumberKey(field.id)
+      const nextCountryCode = patch.countryCode ?? String(current[countryCodeKey] || field.phoneCountryCode || "+91")
+      const nextLocalNumber = patch.localNumber ?? String(current[localNumberKey] || "")
+
+      const nextValues = {
+        ...current,
+        [countryCodeKey]: nextCountryCode,
+        [localNumberKey]: nextLocalNumber,
+        [field.id]: getPhoneFieldValue(nextCountryCode, nextLocalNumber),
+      }
+
+      setErrors((currentErrors) => {
+        if (!currentErrors[field.id]) {
+          return currentErrors
+        }
+
+        const nextError = validateField(field, nextValues)
+
+        if (!nextError) {
+          const nextErrors = { ...currentErrors }
+          delete nextErrors[field.id]
+          return nextErrors
+        }
+
+        return { ...currentErrors, [field.id]: nextError }
+      })
+
+      return nextValues
+    })
+  }, [])
+
+  const handleFieldBlur = React.useCallback((field) => {
+    setFocusedFieldId((current) => (current === field.id ? null : current))
+    setErrors((currentErrors) => {
+      const nextError = validateField(field, values)
+
+      if (!nextError) {
+        if (!currentErrors[field.id]) {
+          return currentErrors
+        }
+
+        const nextErrors = { ...currentErrors }
+        delete nextErrors[field.id]
+        return nextErrors
+      }
+
+      return { ...currentErrors, [field.id]: nextError }
+    })
+  }, [values])
 
   const handleOtp = React.useCallback(async () => {${otpSubmission}
   }, [otpUrl, values])
@@ -768,6 +1255,23 @@ export default function ${componentName}(props) {
 
   const handleSubmit = React.useCallback(async (event) => {
     event.preventDefault()
+    const nextErrors = {}
+
+    fields.forEach((field) => {
+      const nextError = validateField(field, values)
+
+      if (nextError) {
+        nextErrors[field.id] = nextError
+      }
+    })
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors)
+      setSubmitState("error")
+      return
+    }
+
+    setErrors({})
     setSubmitState("loading")
 
     const payload = {
@@ -840,11 +1344,12 @@ ${redirectSubmission}
           >
             {renderField(
               field,
-              values[field.id],
-              handleChange,
+              field.type === "phone" ? values : values[field.id],
+              field.type === "phone" ? handlePhoneChange : handleChange,
               focusedFieldId === field.id,
               () => setFocusedFieldId(field.id),
-              () => setFocusedFieldId((current) => (current === field.id ? null : current)),
+              () => handleFieldBlur(field),
+              errors[field.id],
               resolvedProps
             )}
           </div>
@@ -884,19 +1389,19 @@ ${redirectSubmission}
               >
                 {button.type === "submit" ? (
                   <button type="submit" {...sharedProps}>
-                    <span style={getButtonSurfaceStyle(resolvedProps)}>
+                    <span style={getButtonSurfaceStyle(button, resolvedProps)}>
                       {getButtonContent(button, label, resolvedProps)}
                     </span>
                   </button>
                 ) : button.type === "otp" ? (
                   <button type="button" onClick={handleOtp} style={getButtonRootStyle()}>
-                    <span style={getButtonSurfaceStyle(resolvedProps)}>
+                    <span style={getButtonSurfaceStyle(button, resolvedProps)}>
                       {getButtonContent(button, label, resolvedProps)}
                     </span>
                   </button>
                 ) : (
                   <button type="button" onClick={handleBack} style={getButtonRootStyle()}>
-                    <span style={getButtonSurfaceStyle(resolvedProps)}>
+                    <span style={getButtonSurfaceStyle(button, resolvedProps)}>
                       {getButtonContent(button, label, resolvedProps)}
                     </span>
                   </button>

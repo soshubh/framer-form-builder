@@ -109,10 +109,10 @@ const INITIAL_FIELDS: Field[] = [
     type: "text",
     label: "First Name",
     placeholder: "Enter first name",
-    required: true,
+    required: false,
     isLabelVisible: true,
     isRequiredVisible: true,
-    isHelperTextVisible: true,
+    isHelperTextVisible: false,
     width: "half",
     validationMessage: "First name is required.",
   },
@@ -121,10 +121,10 @@ const INITIAL_FIELDS: Field[] = [
     type: "email",
     label: "Email",
     placeholder: "Enter your work email",
-    required: true,
+    required: false,
     isLabelVisible: true,
     isRequiredVisible: true,
-    isHelperTextVisible: true,
+    isHelperTextVisible: false,
     width: "half",
     validationMessage: "Please enter a valid email address.",
   },
@@ -136,8 +136,11 @@ const INITIAL_FIELDS: Field[] = [
     required: false,
     isLabelVisible: true,
     isRequiredVisible: true,
-    isHelperTextVisible: true,
+    isHelperTextVisible: false,
     width: "half",
+    phoneCountryCodeMode: "fixed",
+    phoneCountryCode: "+91",
+    phoneCountryCodeOptions: ["+1", "+44", "+61", "+91"],
     validationMessage: "Please enter a valid phone number.",
   },
   {
@@ -145,10 +148,10 @@ const INITIAL_FIELDS: Field[] = [
     type: "select",
     label: "Program",
     placeholder: getDefaultPlaceholderForType("select"),
-    required: true,
+    required: false,
     isLabelVisible: true,
     isRequiredVisible: true,
-    isHelperTextVisible: true,
+    isHelperTextVisible: false,
     width: "half",
     options: ["Growth Sprint", "Performance Creative", "Product Advisory"],
     validationMessage: "Please select a program.",
@@ -248,6 +251,27 @@ export const DEFAULT_CONFIG: BuilderConfig = {
     successMessage: "Fill in the details below to get started.",
   },
 };
+
+const DEFAULT_PHONE_COUNTRY_CODE = "+91";
+const DEFAULT_PHONE_COUNTRY_CODE_OPTIONS = ["+1", "+44", "+61", "+91"];
+
+function normalizePhoneField(field: Field): Field {
+  if (field.type !== "phone") {
+    return field;
+  }
+
+  const options =
+    field.phoneCountryCodeOptions && field.phoneCountryCodeOptions.length > 0
+      ? field.phoneCountryCodeOptions
+      : DEFAULT_PHONE_COUNTRY_CODE_OPTIONS;
+
+  return {
+    ...field,
+    phoneCountryCodeMode: field.phoneCountryCodeMode ?? "fixed",
+    phoneCountryCode: field.phoneCountryCode ?? DEFAULT_PHONE_COUNTRY_CODE,
+    phoneCountryCodeOptions: options,
+  };
+}
 
 export function normalizeBuilderConfig(config: BuilderConfig): BuilderConfig {
   const rawStyling = config.styling ?? {};
@@ -402,11 +426,14 @@ export function normalizeBuilderConfig(config: BuilderConfig): BuilderConfig {
   return {
     ...DEFAULT_CONFIG,
     ...config,
-    fields: (config.fields ?? DEFAULT_CONFIG.fields).map((field) =>
-      field.type === "select" && field.placeholder == null
-        ? { ...field, placeholder: getDefaultPlaceholderForType("select") }
-        : field,
-    ),
+    fields: (config.fields ?? DEFAULT_CONFIG.fields).map((field) => {
+      const normalizedField =
+        field.type === "select" && field.placeholder == null
+          ? { ...field, placeholder: getDefaultPlaceholderForType("select") }
+          : field;
+
+      return normalizePhoneField(normalizedField);
+    }),
     buttons: config.buttons ?? DEFAULT_CONFIG.buttons,
     styling: {
       ...nextStyling,
@@ -581,7 +608,7 @@ export function defaultField(type: FieldType, index: number): Field {
       required: false,
       isLabelVisible: true,
       isRequiredVisible: true,
-      isHelperTextVisible: true,
+      isHelperTextVisible: false,
       width: "full",
       options: ["Option 1", "Option 2", "Option 3"],
       validationMessage: "Please choose an option.",
@@ -596,7 +623,7 @@ export function defaultField(type: FieldType, index: number): Field {
       required: false,
       isLabelVisible: true,
       isRequiredVisible: true,
-      isHelperTextVisible: true,
+      isHelperTextVisible: false,
       width: "full",
       options: ["Yes", "No"],
       validationMessage: "Please select one option.",
@@ -611,7 +638,7 @@ export function defaultField(type: FieldType, index: number): Field {
       required: false,
       isLabelVisible: true,
       isRequiredVisible: true,
-      isHelperTextVisible: true,
+      isHelperTextVisible: false,
       width: "full",
       options: ["Option 1", "Option 2", "Option 3"],
       validationMessage: "Please select at least one option.",
@@ -626,8 +653,15 @@ export function defaultField(type: FieldType, index: number): Field {
     required: false,
     isLabelVisible: true,
     isRequiredVisible: true,
-    isHelperTextVisible: true,
+    isHelperTextVisible: false,
     width: "full",
+    ...(type === "phone"
+      ? {
+          phoneCountryCodeMode: "fixed" as const,
+          phoneCountryCode: DEFAULT_PHONE_COUNTRY_CODE,
+          phoneCountryCodeOptions: DEFAULT_PHONE_COUNTRY_CODE_OPTIONS,
+        }
+      : {}),
     validationMessage: `${titleForType(type)} is invalid.`,
   };
 }

@@ -1,8 +1,10 @@
+import type { CSSProperties } from "react";
 import type { FormButtonProps, FormButtonStyle } from "./types";
 import { ButtonContent } from "./ButtonContent";
 
 type CustomActionButtonProps = FormButtonProps & {
   variant: FormButtonStyle;
+  style?: CSSProperties;
 };
 
 export function CustomActionButton({
@@ -15,6 +17,7 @@ export function CustomActionButton({
   isRightIconVisible,
   leftIcon,
   rightIcon,
+  style,
 }: CustomActionButtonProps) {
   const stateLabel =
     actionType === "submit"
@@ -33,7 +36,7 @@ export function CustomActionButton({
       className={`builder-submit builder-submit--${variant} builder-submit-state--${state}`}
       aria-busy={state === "loading"}
     >
-      <span className="builder-submit-surface">
+      <span className="builder-submit-surface" style={style}>
         <ButtonContent
           label={stateLabel}
           actionType={actionType}

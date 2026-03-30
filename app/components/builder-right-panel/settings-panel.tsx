@@ -499,20 +499,6 @@ function StylePanel({
           <option value="1-col">1 column</option>
           <option value="2-col">2 column</option>
         </SelectRow>
-        <SelectRow
-          label="Button style"
-          value={styling.buttonStyle}
-          onChange={(event) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, {
-                buttonStyle: event.target.value as BuilderConfig["styling"]["buttonStyle"],
-              }),
-            )
-          }
-        >
-          <option value="solid">Solid</option>
-          <option value="outline">Outline</option>
-        </SelectRow>
       </InspectorCard>
 
       <InspectorCard title="Theme">
@@ -534,19 +520,6 @@ function StylePanel({
             )
           }
         />
-        <ColorInputRow
-          label="Button color"
-          value={styling.primaryColor}
-          onChange={(value) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, {
-                primaryColor: value,
-                fieldFocusColor: value,
-                buttonBorderColor: value,
-              }),
-            )
-          }
-        />
       </InspectorCard>
 
       <InspectorCard title="Shape">
@@ -561,7 +534,6 @@ function StylePanel({
               updateConfigForPreview(current, previewMode, {
                 sectionRadius: Number(event.target.value || 0),
                 fieldRadius: Number(event.target.value || 0),
-                buttonRadius: Number(event.target.value || 0),
               }),
             )
           }
@@ -968,96 +940,6 @@ function AdvancedStylePanel({
         />
       </InspectorCard>
 
-      <InspectorCard title="Buttons">
-        <SelectRow
-          label="Button style"
-          value={styling.buttonStyle}
-          onChange={(event) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, {
-                buttonStyle: event.target.value as BuilderConfig["styling"]["buttonStyle"],
-              }),
-            )
-          }
-        >
-          <option value="solid">Solid</option>
-          <option value="outline">Outline</option>
-        </SelectRow>
-        <ButtonPaddingRow config={config} previewMode={previewMode} onConfigChange={onConfigChange} />
-        <TextInputRow
-          label="Button radius"
-          type="number"
-          min={0}
-          max={32}
-          value={styling.buttonRadius}
-          onChange={(event) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, {
-                buttonRadius: Number(event.target.value || 0),
-              }),
-            )
-          }
-        />
-        <TextInputRow
-          label="Border width"
-          type="number"
-          min={0}
-          max={12}
-          step={0.1}
-          value={styling.buttonBorderWidth}
-          onChange={(event) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, {
-                buttonBorderWidth: Number(event.target.value || 0),
-              }),
-            )
-          }
-        />
-        <TypographyRow
-          label={getControlTextLabel("Button text", styling.buttonTextSize < 10)}
-          sizeValue={styling.buttonTextSize}
-          sizeMin={8}
-          sizeMax={24}
-          weightValue={styling.buttonTextWeight}
-          onSizeChange={(value) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, { buttonTextSize: value }),
-            )
-          }
-          onWeightChange={(value) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, { buttonTextWeight: value }),
-            )
-          }
-        />
-        <ColorInputRow
-          label="Button color"
-          value={styling.primaryColor}
-          onChange={(value) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, { primaryColor: value }),
-            )
-          }
-        />
-        <ColorInputRow
-          label="Border"
-          value={styling.buttonBorderColor}
-          onChange={(value) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, { buttonBorderColor: value }),
-            )
-          }
-        />
-        <ColorInputRow
-          label="Text color"
-          value={styling.buttonTextColor}
-          onChange={(value) =>
-            onConfigChange((current) =>
-              updateConfigForPreview(current, previewMode, { buttonTextColor: value }),
-            )
-          }
-        />
-      </InspectorCard>
     </InspectorShell>
   );
 }
@@ -1140,21 +1022,14 @@ export function SettingsModePanel({
           className={`builder-app-code-tab ${activeTab === "style" ? "is-active" : ""}`}
           onClick={() => onTabChange("style")}
         >
-          Style
+          Basic
         </button>
         <button
           type="button"
           className={`builder-app-code-tab ${activeTab === "advanced-style" ? "is-active" : ""}`}
           onClick={() => onTabChange("advanced-style")}
         >
-          Advanced Style
-        </button>
-        <button
-          type="button"
-          className={`builder-app-code-tab ${activeTab === "integrations" ? "is-active" : ""}`}
-          onClick={() => onTabChange("integrations")}
-        >
-          Integrations
+          Advanced
         </button>
       </div>
 
@@ -1173,10 +1048,16 @@ export function SettingsModePanel({
           onConfigChange={onConfigChange}
         />
       ) : null}
-
-      {activeTab === "integrations" ? (
-        <IntegrationsPanel config={config} onConfigChange={onConfigChange} />
-      ) : null}
     </>
   );
+}
+
+export function IntegrationsModePanel({
+  config,
+  onConfigChange,
+}: {
+  config: BuilderConfig;
+  onConfigChange: Dispatch<SetStateAction<BuilderConfig>>;
+}) {
+  return <IntegrationsPanel config={config} onConfigChange={onConfigChange} />;
 }

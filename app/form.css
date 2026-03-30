@@ -102,6 +102,11 @@
   display: flex;
   align-items: center;
   width: 100%;
+  min-height: calc(
+    var(--preview-input-padding-top, 9px) +
+    var(--preview-input-padding-bottom, 9px) +
+    max(calc(var(--preview-input-size, 13px) * 1.2), var(--preview-control-icon-size, 12px))
+  );
   border:
     var(--preview-field-border-width, 1px)
     solid
@@ -125,6 +130,21 @@
 
 .form-element-visual-control.is-select .form-element-visual-surface {
   padding-right: calc(var(--preview-input-padding-right, 12px) + 28px);
+}
+
+.form-element-select-control {
+  position: relative;
+}
+
+.form-element-select-trigger {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
 }
 
 .form-element-visual-surface.is-placeholder {
@@ -153,9 +173,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: var(--preview-control-icon-size, 12px);
+  height: var(--preview-control-icon-size, 12px);
+  flex: 0 0 var(--preview-control-icon-size, 12px);
   color: var(--preview-field-label, var(--builder-text-2));
   pointer-events: none;
   transform: translateY(-50%);
+}
+
+.form-element-visual-trailing svg {
+  width: var(--preview-control-icon-size, 12px);
+  height: var(--preview-control-icon-size, 12px);
 }
 
 .form-element-visual-control.is-textarea .form-element-visual-trailing {
@@ -200,8 +228,51 @@
   cursor: pointer;
 }
 
+.form-element-select-menu {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: grid;
+  padding: 4px;
+  border: 1px solid var(--preview-field-border, var(--builder-border));
+  border-radius: var(--preview-field-radius, var(--builder-radius-s));
+  background: var(--preview-field-surface, var(--builder-surface-2));
+  font-family: inherit;
+  font-size: var(--preview-input-size, 13px);
+  font-weight: var(--preview-input-weight, 400);
+  line-height: 1.2;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 0.28);
+}
+
+.form-element-select-option {
+  padding:
+    var(--preview-input-padding-top, 9px)
+    var(--preview-input-padding-right, 12px)
+    var(--preview-input-padding-bottom, 9px)
+    var(--preview-input-padding-left, 12px);
+  border: 0;
+  border-radius: calc(var(--preview-field-radius, var(--builder-radius-s)) - 4px);
+  background: transparent;
+  color: var(--preview-field-text, var(--builder-text));
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.form-element-select-option:hover,
+.form-element-select-option.is-active {
+  background: rgb(255 255 255 / 0.06);
+}
+
 .form-element-control {
   width: 100%;
+  min-height: calc(
+    var(--preview-input-padding-top, 9px) +
+    var(--preview-input-padding-bottom, 9px) +
+    max(calc(var(--preview-input-size, 13px) * 1.2), var(--preview-control-icon-size, 12px))
+  );
   border:
     var(--preview-field-border-width, 1px)
     solid
@@ -247,6 +318,120 @@
 .form-element-control option {
   background: var(--preview-field-surface, var(--builder-surface-2));
   color: var(--preview-field-text, var(--builder-text));
+}
+
+.form-element-phone-layout {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0;
+}
+
+.form-element-phone-code-control {
+  min-width: 0;
+  width: max-content;
+  justify-self: start;
+  position: relative;
+}
+
+.form-element-phone-code-trigger {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.form-element-phone-code-control .form-element-visual-surface,
+.form-element-phone-code-static {
+  display: inline-flex;
+  width: auto;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.form-element-phone-number-control .form-element-visual-surface {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 0;
+}
+
+.form-element-phone-number-control .form-element-native-control {
+  padding-left: calc(var(--preview-input-padding-left, 12px) + 1px);
+}
+
+.form-element-phone-code-static {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.form-element-phone-code-text {
+  width: auto;
+  flex: 0 0 auto;
+  text-align: center;
+  font-size: var(--preview-input-size, 13px);
+}
+
+.form-element-phone-code-control,
+.form-element-phone-code-static {
+  width: max-content;
+  max-width: none;
+}
+
+.form-element-phone-code-control .form-element-visual-surface,
+.form-element-phone-code-static {
+  padding-left: var(--preview-input-padding-left, 12px);
+  padding-right: 4px;
+}
+
+.form-element-phone-code-static {
+  padding-right: var(--preview-input-padding-right, 12px);
+}
+
+.form-element-phone-code-control .form-element-visual-trailing {
+  position: static;
+  transform: none;
+  margin-left: 4px;
+}
+
+.form-element-phone-code-menu {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0;
+  z-index: 40;
+  display: grid;
+  width: max-content;
+  min-width: max-content;
+  padding: 4px;
+  border: 1px solid var(--preview-field-border, var(--builder-border));
+  border-radius: var(--preview-field-radius, var(--builder-radius-s));
+  background: var(--preview-field-surface, var(--builder-surface-2));
+  box-shadow: 0 12px 28px rgb(0 0 0 / 0.28);
+}
+
+.form-element-phone-code-option {
+  padding:
+    var(--preview-input-padding-top, 9px)
+    var(--preview-input-padding-right, 12px)
+    var(--preview-input-padding-bottom, 9px)
+    var(--preview-input-padding-left, 12px);
+  border: 0;
+  border-radius: calc(var(--preview-field-radius, var(--builder-radius-s)) - 4px);
+  background: transparent;
+  color: var(--preview-field-text, var(--builder-text));
+  font-family: inherit;
+  font-size: var(--preview-input-size, 13px);
+  font-weight: var(--preview-input-weight, 400);
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.form-element-phone-code-option:hover,
+.form-element-phone-code-option.is-active {
+  background: rgb(255 255 255 / 0.06);
 }
 
 .form-element-choice-list {
@@ -303,7 +488,7 @@
 
 .builder-app-preview-item.is-selected,
 .builder-app-preview-action.is-selected {
-  z-index: 0;
+  z-index: 5;
 }
 
 .builder-app-preview-item.is-selected::before,
