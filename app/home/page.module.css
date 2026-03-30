@@ -1141,6 +1141,11 @@
   .heroCopy {
     padding: 80px 24px 36px;
   }
+  .heroCopy h1 {
+    font-size: 54px;
+    letter-spacing: -0.04em;
+    line-height: 0.9em;
+  }
   .learnCards {
     display: none;
   }
