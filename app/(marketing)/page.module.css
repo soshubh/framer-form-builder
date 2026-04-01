@@ -1,25 +1,29 @@
-/* ============================================================
-   page.module.css — Framer Forms exact replica
-   ============================================================ */
+@import "../foundation.css";
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
-@font-face {
-  font-family: "GT Walsheim Framer Medium";
-  src: url("../gt-walsheim-font-family/GT-Walsheim-Medium-Trial-BF651b7fc728fb3.otf")
-    format("opentype");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
+:global(html),
+:global(body) {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
 }
 
-/* ── Base ─────────────────────────────────────────────────── */
+:global(body) {
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+:global(*),
+:global(*::before),
+:global(*::after) {
+  box-sizing: border-box;
+}
+
 .page {
   position: relative;
   display: flex;
   flex-direction: column;
-  --landing-shell-border: rgba(17, 24, 39, 0.08);
-  --landing-shell-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+  --landing-shell-border: var(--landing-color-border);
+  --landing-shell-shadow: var(--landing-shadow-panel);
   --landing-accent: var(--landing-color-primary);
   --landing-text: var(--landing-color-text);
   --landing-text-soft: var(--landing-color-text-soft);
@@ -34,6 +38,40 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   isolation: isolate;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 var(--marketing-space-16);
+  border-radius: var(--landing-radius-sm);
+  border: 1px solid transparent;
+  font-family: var(--landing-font-sans);
+  font-size: var(--marketing-type-14);
+  font-weight: var(--marketing-weight-semibold);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.primaryButton {
+  background: var(--landing-color-primary);
+  color: #ffffff;
+}
+
+.primaryButton:hover {
+  opacity: 0.94;
+  transform: translateY(-1px);
 }
 
 .gridBackground {
@@ -81,7 +119,7 @@
 
 .topbarShell {
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--landing-max-width);
   border: 1px solid var(--landing-color-border);
   border-radius: var(--landing-radius-xl);
   background: var(--landing-color-surface);
@@ -141,6 +179,8 @@
 }
 
 .topbarNavList {
+  display: flex;
+  align-items: center;
   gap: 2px;
 }
 
@@ -308,7 +348,7 @@
 .promoBar {
   position: relative;
   z-index: 3;
-  width: min(100%, calc(1200px + (var(--landing-inline-padding) * 2)));
+  width: min(100%, calc(var(--landing-max-width) + (var(--landing-inline-padding) * 2)));
   padding: 0 var(--landing-inline-padding);
   margin-bottom: 52px;
 }
@@ -321,11 +361,11 @@
   padding: 0 22px;
   border-radius: var(--landing-radius-lg);
   background: var(--landing-color-primary);
-  color: #ffffff;
+  color: var(--marketing-color-text-inverse);
   text-align: center;
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: var(--marketing-type-15);
+  font-weight: var(--marketing-weight-medium);
   letter-spacing: -0.02em;
   box-shadow: var(--landing-shadow-promo);
 }
@@ -356,9 +396,9 @@
   border: 1px solid var(--landing-shell-border);
   background: rgba(255, 255, 255, 0.72);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
-  color: rgba(17, 24, 39, 0.72);
-  font-size: 13px;
-  font-weight: 500;
+  color: var(--landing-color-text-muted);
+  font-size: var(--marketing-type-13);
+  font-weight: var(--marketing-weight-medium);
   letter-spacing: -0.02em;
 }
 
@@ -366,8 +406,8 @@
 .heroCopy h1 {
   margin: 0 0 24px;
   font-family: var(--landing-font-display);
-  font-size: 80px;
-  font-weight: 500;
+  font-size: var(--marketing-type-hero);
+  font-weight: var(--marketing-weight-medium);
   line-height: 0.9;
   letter-spacing: -0.04em;
   text-align: center;
@@ -389,12 +429,12 @@
 }
 
 .heroCopy p {
-  font-size: 18px;
+  font-size: var(--marketing-type-18);
   line-height: 1.6;
   color: var(--landing-text-soft);
   max-width: 680px;
   margin: 0 0 36px;
-  font-weight: 400;
+  font-weight: var(--marketing-weight-regular);
   letter-spacing: -0.01em;
 }
 
@@ -467,8 +507,8 @@
 }
 
 .sectionEyebrow {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--marketing-type-11);
+  font-weight: var(--marketing-weight-semibold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.32);
@@ -476,8 +516,8 @@
 }
 
 .sectionTitle {
-  font-size: 30px;
-  font-weight: 700;
+  font-size: var(--marketing-type-30);
+  font-weight: var(--marketing-weight-bold);
   letter-spacing: -0.03em;
   color: var(--landing-text);
 }
@@ -497,9 +537,9 @@
   border-radius: var(--landing-radius-pill);
   border: 1px solid rgba(17, 24, 39, 0.08);
   background: rgba(255, 255, 255, 0.74);
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(17, 24, 39, 0.62);
+  font-size: var(--marketing-type-13);
+  font-weight: var(--marketing-weight-medium);
+  color: var(--landing-color-text-muted);
   text-decoration: none;
   letter-spacing: -0.01em;
   transition:
@@ -539,16 +579,16 @@
 }
 
 .cardEyebrow {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--marketing-type-11);
+  font-weight: var(--marketing-weight-semibold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(17, 24, 39, 0.36);
 }
 
 .featureStripCard h2 {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--marketing-type-15);
+  font-weight: var(--marketing-weight-semibold);
   letter-spacing: -0.02em;
   color: var(--landing-text);
   margin: 0;
@@ -556,11 +596,11 @@
 }
 
 .featureStripCard p {
-  font-size: 13px;
+  font-size: var(--marketing-type-13);
   line-height: 1.6;
-  color: rgba(17, 24, 39, 0.62);
+  color: var(--landing-color-text-muted);
   margin: 0;
-  font-weight: 400;
+  font-weight: var(--marketing-weight-regular);
 }
 
 .featureVisual {
@@ -614,9 +654,9 @@
 }
 
 .storyCopy p {
-  font-size: 15px;
+  font-size: var(--marketing-type-15);
   line-height: 1.65;
-  color: rgba(17, 24, 39, 0.68);
+  color: var(--landing-color-text-soft);
   margin: 0;
   max-width: 400px;
 }
@@ -625,9 +665,9 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(17, 24, 39, 0.7);
+  font-size: var(--marketing-type-13);
+  font-weight: var(--marketing-weight-semibold);
+  color: var(--landing-color-text-soft);
   text-decoration: none;
   width: fit-content;
   margin-top: 4px;
@@ -635,7 +675,7 @@
 }
 
 .storyLink:hover {
-  color: #ffffff;
+  color: var(--landing-color-text);
 }
 
 .storyLink::after {
@@ -751,9 +791,9 @@
 
 .subpageEyebrow {
   margin: 0 0 14px;
-  color: rgba(17, 24, 39, 0.44);
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--landing-color-text-tertiary);
+  font-size: var(--marketing-type-12);
+  font-weight: var(--marketing-weight-semibold);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -771,13 +811,13 @@
   max-width: 640px;
   margin: 22px auto 0;
   color: var(--landing-text-soft);
-  font-size: 18px;
+  font-size: var(--marketing-type-18);
   line-height: 1.65;
   letter-spacing: -0.015em;
 }
 
 .subpageSections {
-  max-width: 1200px;
+  max-width: var(--landing-max-width);
   margin: 0 auto;
   display: grid;
   gap: 24px;
@@ -802,7 +842,7 @@
 .subpageSectionBody {
   margin: 0;
   color: var(--landing-text-soft);
-  font-size: 15px;
+  font-size: var(--marketing-type-15);
   line-height: 1.7;
 }
 
@@ -853,8 +893,8 @@
 
 .subpageQuoteMeta {
   margin-top: 14px;
-  color: rgba(17, 24, 39, 0.52);
-  font-size: 14px;
+  color: var(--landing-color-text-tertiary);
+  font-size: var(--marketing-type-14);
 }
 
 .subpageUpdateCard {
@@ -867,9 +907,9 @@
 
 .subpageUpdateMeta {
   margin: 0 0 10px;
-  color: rgba(17, 24, 39, 0.44);
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--landing-color-text-tertiary);
+  font-size: var(--marketing-type-12);
+  font-weight: var(--marketing-weight-semibold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -885,7 +925,7 @@
 .subpageUpdateBody {
   margin: 0;
   color: var(--landing-text-soft);
-  font-size: 15px;
+  font-size: var(--marketing-type-15);
   line-height: 1.7;
 }
 
@@ -904,8 +944,8 @@
   border-radius: 999px;
   background: rgb(var(--landing-color-primary-rgb) / 0.06);
   color: rgb(var(--landing-color-primary-rgb) / 0.88);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--marketing-type-12);
+  font-weight: var(--marketing-weight-medium);
 }
 
 .realBuilderInspector {
@@ -1200,7 +1240,7 @@
    ============================================================ */
 @media (max-width: 1024px) {
   .page {
-    --landing-inline-padding: 40px;
+    --landing-inline-padding: 60px;
   }
   .topbar {
     padding: 0 var(--landing-inline-padding);
@@ -1241,6 +1281,11 @@
 }
 
 @media (max-width: 768px) {
+  .page {
+    --landing-inline-padding: var(--landing-mobile-gutter);
+    --landing-topbar-top: var(--landing-mobile-gutter);
+    --landing-hero-padding-top: 132px;
+  }
   .promoBar {
     margin-bottom: 32px;
   }
@@ -1252,7 +1297,7 @@
   .topbarInner {
     grid-template-columns: 28px 1fr 0px;
     min-height: var(--landing-mobile-topbar-height);
-    padding: 0 var(--landing-mobile-topbar-padding-inline);
+    padding: 0;
     gap: 0;
   }
   .brand {
@@ -1306,7 +1351,7 @@
     font-size: 16px;
   }
   .subpageMain {
-    padding-top: calc(var(--landing-mobile-topbar-height) + var(--landing-topbar-top) + 36px);
+    padding-top: calc(var(--landing-mobile-topbar-height) + var(--landing-topbar-top) + 20px);
     padding-bottom: 72px;
   }
   .subpageHero {

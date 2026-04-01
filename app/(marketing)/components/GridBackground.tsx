@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import styles from "../../home/page.module.css";
+import styles from "../page.module.css";
 
 export function GridBackground() {
   useEffect(() => {

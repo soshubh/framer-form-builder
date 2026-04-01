@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { landingNavItems } from "./nav-items";
-import styles from "@/app/home/page.module.css";
+import styles from "../page.module.css";
 import { LandingTopbar } from "./topbar";
 
 type LandingSubpageShellProps = {
@@ -18,7 +18,7 @@ export function LandingSubpageShell({
   children,
 }: LandingSubpageShellProps) {
   return (
-    <main className={styles.page}>
+    <main className={`${styles.page} marketing-page`}>
       <LandingTopbar items={landingNavItems} />
       <div className={styles.subpageMain}>
         <header className={styles.subpageHero}>

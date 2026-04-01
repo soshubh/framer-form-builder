@@ -5,17 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import logoImage from "@/app/FBFLogo.png";
-import wordmarkImage from "@/app/WordMark/WordMark.svg";
 
-import styles from "@/app/home/page.module.css";
+import styles from "../page.module.css";
 
 type NavItem = {
   label: string;
@@ -45,54 +36,48 @@ export function LandingTopbar({
               alt="Framer Form Builder"
               className={styles.brandMark}
               priority
-              src={logoImage}
+              src="/brand/FBFLogo.png"
+              width={32}
+              height={32}
             />
             <Image
               alt="Framer Form Builder wordmark"
               className={styles.brandWordmark}
               priority
-              src={wordmarkImage}
+              src="/brand/wordmark/WordMark.svg"
+              width={112}
+              height={18}
             />
           </Link>
-          <NavigationMenu className={styles.topbarNav}>
-            <NavigationMenuList className={styles.topbarNavList}>
+          <nav aria-label="Primary" className={styles.topbarNav}>
+            <div className={styles.topbarNavList}>
               {items.map((item) => (
-                <NavigationMenuItem key={item.label}>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      className={`${styles.topbarNavLink} ${pathname === item.href ? styles.topbarNavLinkActive : ""}`}
-                      href={item.href}
-                    >
-                      {item.label}
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+                <Link
+                  className={`${styles.topbarNavLink} ${pathname === item.href ? styles.topbarNavLinkActive : ""}`}
+                  href={item.href}
+                  key={item.label}
+                >
+                  {item.label}
+                </Link>
               ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+            </div>
+          </nav>
           <div className={styles.topbarActions}>
             <span className={styles.profileName}>{profileLabel}</span>
-            <Button
-              asChild
-              className="landing-primary-button"
-              size="sm"
-              variant="default"
-            >
-              <Link href="/builder">Open Builder</Link>
-            </Button>
+            <Link className={styles.primaryButton} href="/builder">
+              Open Builder
+            </Link>
           </div>
-          <Button
+          <button
             aria-expanded={isNavOpen}
             aria-label="Toggle navigation"
             className={`${styles.topbarMenuButton} ${isNavOpen ? styles.topbarMenuButtonOpen : ""}`}
             onClick={() => setIsNavOpen((current) => !current)}
-            size="icon-sm"
             type="button"
-            variant="ghost"
           >
             <span />
             <span />
-          </Button>
+          </button>
         </div>
         <div
           className={`${styles.mobileNavPanel} ${isNavOpen ? styles.mobileNavPanelOpen : ""}`}
@@ -108,17 +93,14 @@ export function LandingTopbar({
               {item.label}
             </Link>
           ))}
-          <Button
-            asChild
-            className={`landing-primary-button ${styles.mobileBuilderButton} ${styles.mobileNavEntry}`}
-            size="sm"
+          <Link
+            className={`${styles.primaryButton} ${styles.mobileBuilderButton} ${styles.mobileNavEntry}`}
+            href="/builder"
+            onClick={() => setIsNavOpen(false)}
             style={{ "--nav-item-index": items.length } as CSSProperties}
-            variant="default"
           >
-            <Link href="/builder" onClick={() => setIsNavOpen(false)}>
-              Open Builder
-            </Link>
-          </Button>
+            Open Builder
+          </Link>
         </div>
       </div>
     </div>

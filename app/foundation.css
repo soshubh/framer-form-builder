@@ -1,0 +1,146 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+@font-face {
+  font-family: "GT Walsheim Framer Medium";
+  src: url("/fonts/gt-walsheim/GT-Walsheim-Medium-Trial-BF651b7fc728fb3.otf")
+    format("opentype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+.marketing-page {
+  /* Primary palette */
+  --marketing-primary-50: #fff6ec;
+  --marketing-primary-100: #ffead3;
+  --marketing-primary-200: #ffd1a5;
+  --marketing-primary-300: #ffb16d;
+  --marketing-primary-400: #ff8532;
+  --marketing-primary-500: #ff640a;
+  --marketing-primary-600: #ff4c00;
+  --marketing-primary-700: #cc3402;
+  --marketing-primary-800: #a12a0b;
+  --marketing-primary-900: #82250c;
+  --marketing-primary-950: #460f04;
+
+  /* Neutral palette */
+  --marketing-neutral-50: #fafafa;
+  --marketing-neutral-100: #f5f5f5;
+  --marketing-neutral-200: #e6e6e6;
+  --marketing-neutral-300: #d3d3d3;
+  --marketing-neutral-400: #a3a3a3;
+  --marketing-neutral-500: #727272;
+  --marketing-neutral-600: #535353;
+  --marketing-neutral-700: #404040;
+  --marketing-neutral-800: #272727;
+  --marketing-neutral-900: #1a1a1a;
+  --marketing-neutral-950: #121212;
+
+  /* Semantic colors */
+  --marketing-color-background: var(--marketing-neutral-50);
+  --marketing-color-surface: rgba(250, 250, 250, 0.92);
+  --marketing-color-surface-strong: rgba(250, 250, 250, 0.98);
+  --marketing-color-surface-soft: rgba(245, 245, 245, 0.82);
+  --marketing-color-stroke: #ededed;
+  --marketing-color-text-primary: var(--marketing-neutral-950);
+  --marketing-color-text-secondary: var(--marketing-neutral-700);
+  --marketing-color-text-tertiary: var(--marketing-neutral-500);
+  --marketing-color-text-inverse: #ffffff;
+  --marketing-color-primary: var(--marketing-primary-600);
+  --marketing-color-primary-soft: var(--marketing-primary-50);
+  --marketing-color-primary-strong: var(--marketing-primary-700);
+  --marketing-color-primary-rgb: 255 76 0;
+
+  /* Typography */
+  --marketing-font-sans:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  --marketing-font-display:
+    "GT Walsheim Framer Medium", "GT Walsheim Framer Medium Placeholder",
+    sans-serif;
+  --marketing-type-11: 11px;
+  --marketing-type-12: 12px;
+  --marketing-type-13: 13px;
+  --marketing-type-14: 14px;
+  --marketing-type-15: 15px;
+  --marketing-type-18: 18px;
+  --marketing-type-24: 24px;
+  --marketing-type-30: 30px;
+  --marketing-type-hero: 80px;
+  --marketing-weight-regular: 400;
+  --marketing-weight-medium: 500;
+  --marketing-weight-semibold: 600;
+  --marketing-weight-bold: 700;
+
+  /* Radius */
+  --marketing-radius-sm: 8px;
+  --marketing-radius-md: 12px;
+  --marketing-radius-lg: 18px;
+  --marketing-radius-xl: 24px;
+  --marketing-radius-2xl: 36px;
+  --marketing-radius-pill: 999px;
+
+  /* Space */
+  --marketing-space-8: 8px;
+  --marketing-space-10: 10px;
+  --marketing-space-12: 12px;
+  --marketing-space-14: 14px;
+  --marketing-space-16: 16px;
+  --marketing-space-20: 20px;
+  --marketing-space-24: 24px;
+  --marketing-space-28: 28px;
+  --marketing-space-32: 32px;
+  --marketing-space-40: 40px;
+  --marketing-space-48: 48px;
+  --marketing-space-60: 60px;
+  --marketing-space-72: 72px;
+  --marketing-space-96: 96px;
+  --marketing-space-144: 144px;
+
+  /* Elevation */
+  --marketing-shadow-elevation:
+    0 18px 44px rgba(18, 18, 18, 0.08);
+  --marketing-shadow-topbar:
+    0 20px 50px rgba(18, 18, 18, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  --marketing-shadow-promo:
+    0 18px 40px rgb(var(--marketing-color-primary-rgb) / 0.18);
+
+  /* Existing landing aliases */
+  --landing-font-sans: var(--marketing-font-sans);
+  --landing-font-display: var(--marketing-font-display);
+  --landing-color-primary: var(--marketing-color-primary);
+  --landing-color-primary-rgb: var(--marketing-color-primary-rgb);
+  --landing-color-text: var(--marketing-color-text-primary);
+  --landing-color-text-soft: var(--marketing-color-text-secondary);
+  --landing-color-text-muted: var(--marketing-color-text-tertiary);
+  --landing-color-surface: var(--marketing-color-surface);
+  --landing-color-surface-strong: var(--marketing-color-surface-strong);
+  --landing-color-surface-soft: var(--marketing-color-surface-soft);
+  --landing-color-border: var(--marketing-color-stroke);
+  --landing-color-grid: var(--marketing-color-stroke);
+  --landing-color-canvas: var(--marketing-color-background);
+  --landing-inline-padding: var(--marketing-space-144);
+  --landing-page-scroll-offset: 72px;
+  --landing-hero-padding-top: 132px;
+  --landing-hero-padding-bottom: 56px;
+  --landing-section-gap: var(--marketing-space-16);
+  --landing-max-width: 1220px;
+  --landing-topbar-top: var(--marketing-space-28);
+  --landing-topbar-height: 76px;
+  --landing-topbar-padding-inline: var(--marketing-space-28);
+  --landing-mobile-gutter: var(--marketing-space-16);
+  --landing-mobile-topbar-height: 62px;
+  --landing-mobile-topbar-padding-inline: var(--landing-mobile-gutter);
+  --landing-radius-sm: var(--marketing-radius-sm);
+  --landing-radius-md: var(--marketing-radius-md);
+  --landing-radius-lg: var(--marketing-radius-lg);
+  --landing-radius-xl: var(--marketing-radius-xl);
+  --landing-radius-2xl: var(--marketing-radius-2xl);
+  --landing-radius-pill: var(--marketing-radius-pill);
+  --landing-shadow-topbar: var(--marketing-shadow-topbar);
+  --landing-shadow-promo: var(--marketing-shadow-promo);
+  --landing-shadow-panel: var(--marketing-shadow-elevation);
+}

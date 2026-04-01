@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import "./form.css";
-import { Roboto, Inter } from "next/font/google";
-
-const interHeading = Inter({subsets:['latin'],variable:'--font-heading'});
-
-const roboto = Roboto({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "WHIM",
   description: "Build and export production-ready Framer forms with live preview and code generation.",
+  icons: {
+    icon: "/brand/FBFLogo.png",
+    shortcut: "/brand/FBFLogo.png",
+    apple: "/brand/FBFLogo.png",
+  },
 };
 
 export default function RootLayout({
@@ -18,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${roboto.variable} ${interHeading.variable}`}>
+    <html lang="en">
       <body>{children}</body>
     </html>
   );
