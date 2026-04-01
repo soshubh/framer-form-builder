@@ -15,13 +15,9 @@ type NavItem = {
 
 type LandingTopbarProps = {
   items: readonly NavItem[];
-  profileLabel?: string;
 };
 
-export function LandingTopbar({
-  items,
-  profileLabel = "Shubh",
-}: LandingTopbarProps) {
+export function LandingTopbar({ items }: LandingTopbarProps) {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const pathname = usePathname();
 
@@ -31,7 +27,12 @@ export function LandingTopbar({
         className={`${styles.topbarShell} ${isNavOpen ? styles.topbarShellExpanded : ""}`}
       >
         <div className={styles.topbarInner}>
-          <Link aria-label="Go to homepage" className={styles.brand} href="/">
+          <Link
+            aria-label="Go to homepage"
+            className={styles.brand}
+            href="/"
+            onClick={() => setIsNavOpen(false)}
+          >
             <Image
               alt="Framer Form Builder"
               className={styles.brandMark}
@@ -63,7 +64,6 @@ export function LandingTopbar({
             </div>
           </nav>
           <div className={styles.topbarActions}>
-            <span className={styles.profileName}>{profileLabel}</span>
             <Link className={styles.primaryButton} href="/builder">
               Open Builder
             </Link>
