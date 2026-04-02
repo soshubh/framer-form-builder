@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { marketingDisplay, marketingSans } from "./marketing-fonts";
 import { landingNavItems } from "./nav-items";
 import styles from "../page.module.css";
 import { LandingTopbar } from "./topbar";
@@ -18,7 +19,9 @@ export function LandingSubpageShell({
   children,
 }: LandingSubpageShellProps) {
   return (
-    <main className={styles.page}>
+    <main
+      className={`${styles.page} ${marketingSans.variable} ${marketingDisplay.variable}`}
+    >
       <LandingTopbar items={landingNavItems} />
       <div className={styles.subpageMain}>
         <header className={styles.subpageHero}>

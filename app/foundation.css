@@ -1,14 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
-@font-face {
-  font-family: "GT Walsheim Framer Medium";
-  src: url("/fonts/gt-walsheim/GT-Walsheim-Medium-Trial-BF651b7fc728fb3.otf")
-    format("opentype");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
 :root {
   /* Primary palette */
   --marketing-primary-50: #fff6ec;
@@ -53,13 +42,12 @@
 
   /* Typography */
   --marketing-font-sans:
-    "Inter",
+    ui-sans-serif,
     -apple-system,
     BlinkMacSystemFont,
+    "Segoe UI",
     sans-serif;
-  --marketing-font-display:
-    "GT Walsheim Framer Medium", "GT Walsheim Framer Medium Placeholder",
-    sans-serif;
+  --marketing-font-display: var(--marketing-font-sans);
   --marketing-type-11: 11px;
   --marketing-type-12: 12px;
   --marketing-type-13: 13px;

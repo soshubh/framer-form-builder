@@ -1,10 +1,10 @@
-"use client";
-
-import type { CSSProperties } from "react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
 
+import { BuilderStatePreview } from "./components/builder-state-preview";
+import { CodePreviewCopyButton } from "./components/code-preview-copy-button";
+import { marketingDisplay, marketingSans } from "./components/marketing-fonts";
 import { landingNavItems } from "./components/nav-items";
+import { LearnGrid } from "./components/learn-grid";
 import { submitApplicationFormPreview } from "./components/submit-application-form-preview";
 import { GridBackground } from "./components/GridBackground";
 import { LandingTopbar } from "./components/topbar";
@@ -58,91 +58,6 @@ function BuilderFieldPreview() {
   );
 }
 
-function BuilderStatePreview() {
-  const [toggleStates, setToggleStates] = useState({
-    otp: true,
-    sheets: true,
-    webhook: true,
-    redirect: false,
-  });
-
-  const toggleItem = (key: keyof typeof toggleStates) => {
-    setToggleStates((current) => ({
-      ...current,
-      [key]: !current[key],
-    }));
-  };
-
-  return (
-    <div className={styles.toggleList}>
-      <div className={styles.toggleRow}>
-        <div className={styles.toggleCopy}>
-          <div className={styles.toggleLabel}>Enable OTP verification</div>
-          <div className={styles.toggleDescription}>
-            Verify mobile submissions before form send.
-          </div>
-        </div>
-        <button
-          aria-pressed={toggleStates.otp}
-          className={`${styles.toggleSwitch} ${toggleStates.otp ? styles.toggleSwitchEnabled : ""}`}
-          onClick={() => toggleItem("otp")}
-          type="button"
-        >
-          <span className={styles.toggleKnob} />
-        </button>
-      </div>
-      <div className={styles.toggleRow}>
-        <div className={styles.toggleCopy}>
-          <div className={styles.toggleLabel}>Enable Google Sheets</div>
-          <div className={styles.toggleDescription}>
-            Sync submissions into a connected sheet automatically.
-          </div>
-        </div>
-        <button
-          aria-pressed={toggleStates.sheets}
-          className={`${styles.toggleSwitch} ${toggleStates.sheets ? styles.toggleSwitchEnabled : ""}`}
-          onClick={() => toggleItem("sheets")}
-          type="button"
-        >
-          <span className={styles.toggleKnob} />
-        </button>
-      </div>
-      <div className={styles.toggleRow}>
-        <div className={styles.toggleCopy}>
-          <div className={styles.toggleLabel}>Enable data webhook</div>
-          <div className={styles.toggleDescription}>
-            Send structured payloads to your backend endpoint.
-          </div>
-        </div>
-        <button
-          aria-pressed={toggleStates.webhook}
-          className={`${styles.toggleSwitch} ${toggleStates.webhook ? styles.toggleSwitchEnabled : ""}`}
-          onClick={() => toggleItem("webhook")}
-          type="button"
-        >
-          <span className={styles.toggleKnob} />
-        </button>
-      </div>
-      <div className={styles.toggleRow}>
-        <div className={styles.toggleCopy}>
-          <div className={styles.toggleLabel}>Enable redirect on submit</div>
-          <div className={styles.toggleDescription}>
-            Take visitors to a destination after successful submit.
-          </div>
-        </div>
-        <button
-          aria-pressed={toggleStates.redirect}
-          className={`${styles.toggleSwitch} ${toggleStates.redirect ? styles.toggleSwitchEnabled : ""}`}
-          onClick={() => toggleItem("redirect")}
-          type="button"
-        >
-          <span className={styles.toggleKnob} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function BuilderInspectorPreview() {
   return (
     <div className={styles.realBuilderInspector}>
@@ -190,40 +105,14 @@ function BuilderInspectorPreview() {
 }
 
 function BuilderIntegrationPreview() {
-  const [isCopied, setIsCopied] = useState(false);
-
-  useEffect(() => {
-    if (!isCopied) {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      setIsCopied(false);
-    }, 1400);
-
-    return () => window.clearTimeout(timeout);
-  }, [isCopied]);
-
   return (
     <article className={styles.codePreviewCard}>
       <header className={styles.codePreviewHeader}>
         <code className={styles.codePreviewFile}>SubmitApplicationForm.tsx</code>
-        <button
-          className={`${styles.codePreviewCopy} ${isCopied ? styles.codePreviewCopyActive : ""}`}
-          onClick={() => setIsCopied(true)}
-          type="button"
-        >
-          {isCopied ? "Code copied" : "Copy"}
-        </button>
+        <CodePreviewCopyButton />
       </header>
       <pre className={styles.codePreviewBody}>
-        <code>
-          {submitApplicationFormPreview.split("\n").map((line, index) => (
-            <span className={styles.codeLine} key={`${index}-${line}`}>
-              {line || " "}
-            </span>
-          ))}
-        </code>
+        <code>{submitApplicationFormPreview}</code>
       </pre>
     </article>
   );
@@ -415,39 +304,11 @@ function VisualMock({ variant }: { variant: string }) {
 }
 
 export default function ProductHomePage() {
-  const referenceCardRef = useRef<HTMLElement | null>(null);
-  const [referenceCardHeight, setReferenceCardHeight] = useState<number | null>(
-    null,
-  );
-
-  useEffect(() => {
-    const referenceCard = referenceCardRef.current;
-
-    if (!referenceCard) {
-      return;
-    }
-
-    const updateHeight = () => {
-      setReferenceCardHeight(referenceCard.getBoundingClientRect().height);
-    };
-
-    updateHeight();
-
-    const observer = new ResizeObserver(() => {
-      updateHeight();
-    });
-
-    observer.observe(referenceCard);
-    window.addEventListener("resize", updateHeight);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateHeight);
-    };
-  }, []);
-
   return (
-    <main className={styles.page} id="top">
+    <main
+      className={`${styles.page} ${marketingSans.variable} ${marketingDisplay.variable}`}
+      id="top"
+    >
       <GridBackground />
       <section className={styles.hero}>
         <LandingTopbar items={landingNavItems} />
@@ -490,56 +351,53 @@ export default function ProductHomePage() {
             One source of truth for fields, styling, behavior, and submissions.
           </p>
         </div>
-        <div
-          className={styles.learnGrid}
-          style={
-            referenceCardHeight
-              ? ({
-                  "--learn-reference-height": `${referenceCardHeight}px`,
-                } as CSSProperties)
-              : undefined
+        <LearnGrid
+          left={
+            <>
+              <div className={styles.learnCardCopy}>
+                <h3 className={styles.learnCardTitle}>Build the field layer</h3>
+                <p className={styles.learnCardBody}>
+                  Add text, email, phone, dropdowns, radios, checkboxes.
+                  Control widths, layout, and responsive structure with
+                  system-level logic.
+                </p>
+              </div>
+              <div className={styles.learnCardVisual}>
+                <BuilderFieldPreview />
+              </div>
+            </>
           }
-        >
-          <article className={`${styles.learnCard} ${styles.learnCardMatchReference}`}>
-            <div className={styles.learnCardCopy}>
-              <h3 className={styles.learnCardTitle}>Build the field layer</h3>
-              <p className={styles.learnCardBody}>
-                Add text, email, phone, dropdowns, radios, checkboxes. Control
-                widths, layout, and responsive structure with system-level
-                logic.
-              </p>
-            </div>
-            <div className={styles.learnCardVisual}>
-              <BuilderFieldPreview />
-            </div>
-          </article>
-          <article className={styles.learnCard} ref={referenceCardRef}>
-            <div className={styles.learnCardCopy}>
-              <h3 className={styles.learnCardTitle}>
-                Ship data to the right places
-              </h3>
-              <p className={styles.learnCardBody}>
-                Connect directly to Google Sheets and webhooks, no need to
-                rebuild payload logic or submission handling separately.
-              </p>
-            </div>
-            <div className={styles.learnCardVisual}>
-              <BuilderStatePreview />
-            </div>
-          </article>
-          <article className={`${styles.learnCard} ${styles.learnCardMatchReference}`}>
-            <div className={styles.learnCardCopy}>
-              <h3 className={styles.learnCardTitle}>Ship to destinations</h3>
-              <p className={styles.learnCardBody}>
-                Export production-ready Framer JSX. Route submissions to Google
-                Sheets and webhooks without rebuilding payload logic.
-              </p>
-            </div>
-            <div className={styles.learnCardVisual}>
-              <BuilderIntegrationPreview />
-            </div>
-          </article>
-        </div>
+          middle={
+            <>
+              <div className={styles.learnCardCopy}>
+                <h3 className={styles.learnCardTitle}>
+                  Ship data to the right places
+                </h3>
+                <p className={styles.learnCardBody}>
+                  Connect directly to Google Sheets and webhooks, no need to
+                  rebuild payload logic or submission handling separately.
+                </p>
+              </div>
+              <div className={styles.learnCardVisual}>
+                <BuilderStatePreview />
+              </div>
+            </>
+          }
+          right={
+            <>
+              <div className={styles.learnCardCopy}>
+                <h3 className={styles.learnCardTitle}>Ship to destinations</h3>
+                <p className={styles.learnCardBody}>
+                  Export production-ready Framer JSX. Route submissions to
+                  Google Sheets and webhooks without rebuilding payload logic.
+                </p>
+              </div>
+              <div className={styles.learnCardVisual}>
+                <BuilderIntegrationPreview />
+              </div>
+            </>
+          }
+        />
       </section>
 
       <section className={styles.storySection} id="made-by">

@@ -1304,17 +1304,13 @@
 }
 
 .codePreviewBody code {
-  display: grid;
-  gap: var(--marketing-space-8);
+  display: block;
   font-family:
     "SFMono-Regular", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
   font-size: var(--marketing-type-12);
   line-height: 1.55;
-}
-
-.codeLine {
   color: var(--marketing-color-text-secondary);
-  white-space: pre-wrap;
+  white-space: pre;
 }
 
 .codeKeyword {
