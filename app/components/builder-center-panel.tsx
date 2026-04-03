@@ -135,10 +135,12 @@ export function BuilderCenterPanel({
     <section className="builder-app-center-panel">
       <div className="builder-app-preview-toolbar">
         <span className="builder-app-panel-title">Preview</span>
-        <PreviewDeviceTabs
-          previewMode={previewMode}
-          onPreviewModeChange={onPreviewModeChange}
-        />
+        <div className="builder-app-preview-toolbar-tabs">
+          <PreviewDeviceTabs
+            previewMode={previewMode}
+            onPreviewModeChange={onPreviewModeChange}
+          />
+        </div>
         <span className="builder-app-toolbar-meta">
           {fields.length} fields · {buttons.length} buttons · {layout} layout
         </span>
@@ -260,6 +262,13 @@ export function BuilderCenterPanel({
               })}
             </div>
           ) : null}
+        </div>
+
+        <div className="builder-app-preview-mobile-tabs">
+          <PreviewDeviceTabs
+            previewMode={previewMode}
+            onPreviewModeChange={onPreviewModeChange}
+          />
         </div>
       </div>
     </section>

@@ -1,3 +1,6 @@
+import Image from "next/image";
+import Link from "next/link";
+
 import { SystemButton } from "./system-button";
 
 type BuilderTopbarProps = {
@@ -13,13 +16,30 @@ export function BuilderTopbar({
 }: BuilderTopbarProps) {
   return (
     <header className="builder-app-topbar">
-      <div className="builder-app-topbar-logo">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-          <path d="M0 0h18v9H9L0 18V0z" fill="currentColor" />
-          <path d="M9 9h9v9L9 9z" fill="rgb(255 255 255 / 0.4)" />
-        </svg>
-        Form Builder
-      </div>
+      <Link
+        aria-label="Go to homepage"
+        className="builder-app-topbar-logo"
+        href="/"
+        rel="noreferrer"
+        target="_blank"
+      >
+        <Image
+          alt="WHIM"
+          className="builder-app-topbar-mark"
+          priority
+          src="/brand/FBFLogo.png"
+          width={28}
+          height={28}
+        />
+        <Image
+          alt="WHIM wordmark"
+          className="builder-app-topbar-wordmark"
+          priority
+          src="/brand/wordmark/WordMark.svg"
+          width={96}
+          height={16}
+        />
+      </Link>
 
       <div className="builder-app-topbar-divider" />
 

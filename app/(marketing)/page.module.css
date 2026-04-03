@@ -1834,49 +1834,151 @@
    ============================================================ */
 @media (max-width: 1024px) {
   .page {
-    --landing-inline-padding: 60px;
+    --landing-inline-padding: 40px;
   }
+
   .topbar {
     padding: 0 var(--landing-inline-padding);
   }
+
+  .topbarInner {
+    grid-template-columns: minmax(180px, 1fr) auto minmax(140px, 1fr);
+    gap: 16px;
+    padding: 0 20px;
+  }
+
+  .topbarNavList {
+    gap: 0;
+  }
+
+  .topbarNavLink {
+    padding: 10px 10px;
+    font-size: 13px;
+  }
+
+  .heroCopy {
+    max-width: 760px;
+    padding: 0 40px 40px;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(58px, 9vw, 68px);
+    line-height: 0.94;
+  }
+
+  .heroCopy p {
+    font-size: 16px;
+    max-width: 620px;
+  }
+
+  .promoBar {
+    width: 100%;
+    padding: 0 var(--landing-inline-padding);
+    margin-bottom: 36px;
+  }
+
+  .learnSection,
+  .featureStripSection,
+  .storySection,
+  .footerCta,
+  .subpageMain {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .learnSection {
+    padding-inline: var(--landing-inline-padding);
+  }
+
   .learnGrid {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     grid-template-columns: 1fr;
   }
+
+  .learnCard {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .learnCardVisual {
+    width: 100%;
+    min-width: 0;
+  }
+
   .learnCardMatchReference {
     height: auto;
   }
+
   .featureStripSection {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .featureStripCard:nth-child(2) {
     border-right: none;
   }
+
   .featureStripCard:nth-child(3) {
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     border-right: 1px solid rgba(255, 255, 255, 0.06);
   }
+
   .featureStripCard:nth-child(4) {
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     border-right: none;
   }
+
   .storyRow {
     grid-template-columns: 1fr;
     min-height: auto;
   }
+
   .storyRowReverse {
     direction: ltr;
   }
+
   .storyCopy {
     padding: 48px 32px;
   }
+
   .storyVisual {
     border-left: none;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     min-height: 280px;
   }
+
   .storyRowReverse .storyVisual {
     border-right: none;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .codePreviewCard {
+    height: 420px;
+  }
+
+  .footerCard {
+    gap: 48px;
+    padding: 40px;
+  }
+
+  .footerTop,
+  .footerBottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footerNav {
+    justify-items: start;
+    gap: 20px;
+    padding-top: 0;
+  }
+
+  .footerBottom {
+    gap: 12px;
+    min-height: 0;
   }
 }
 

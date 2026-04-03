@@ -8,7 +8,11 @@
   border-radius: var(--preview-section-radius, calc(var(--builder-radius-s) + 4px));
   background: var(--preview-section-surface, var(--builder-surface));
   padding: var(--preview-form-padding, 28px);
-  box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
+  box-shadow: var(--landing-shadow-panel);
+}
+
+.builder-app-form-shell.is-desktop {
+  max-width: 640px;
 }
 
 .builder-app-form-shell.is-tablet {
@@ -243,7 +247,7 @@
   font-size: var(--preview-input-size, 13px);
   font-weight: var(--preview-input-weight, 400);
   line-height: 1.2;
-  box-shadow: 0 12px 28px rgb(0 0 0 / 0.28);
+  box-shadow: var(--landing-shadow-panel);
 }
 
 .form-element-select-option {
@@ -263,7 +267,7 @@
 
 .form-element-select-option:hover,
 .form-element-select-option.is-active {
-  background: rgb(255 255 255 / 0.06);
+  background: var(--builder-overlay);
 }
 
 .form-element-control {
@@ -407,7 +411,7 @@
   border: 1px solid var(--preview-field-border, var(--builder-border));
   border-radius: var(--preview-field-radius, var(--builder-radius-s));
   background: var(--preview-field-surface, var(--builder-surface-2));
-  box-shadow: 0 12px 28px rgb(0 0 0 / 0.28);
+  box-shadow: var(--landing-shadow-panel);
 }
 
 .form-element-phone-code-option {
@@ -431,7 +435,7 @@
 
 .form-element-phone-code-option:hover,
 .form-element-phone-code-option.is-active {
-  background: rgb(255 255 255 / 0.06);
+  background: var(--builder-overlay);
 }
 
 .form-element-choice-list {
@@ -575,7 +579,7 @@
     solid
     var(--preview-button-border-color, var(--preview-primary, var(--builder-blue)));
   background: var(--preview-primary, var(--builder-blue));
-  color: var(--preview-button-text-color, #ffffff);
+  color: var(--preview-button-text-color, var(--marketing-color-text-inverse));
 }
 
 .builder-submit--outline .builder-submit-surface {
@@ -591,6 +595,26 @@
 .builder-submit-state--success,
 .builder-submit-state--error {
   opacity: 0.9;
+}
+
+@media (max-width: 960px) {
+  .builder-app-form-shell.is-desktop {
+    width: 640px;
+    min-width: 640px;
+    max-width: none;
+  }
+
+  .builder-app-form-shell.is-tablet {
+    width: 560px;
+    min-width: 560px;
+    max-width: none;
+  }
+
+  .builder-app-form-shell.is-mobile {
+    width: min(390px, 100%);
+    min-width: 320px;
+    max-width: 390px;
+  }
 }
 
 @media (max-width: 720px) {

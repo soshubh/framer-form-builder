@@ -1,4 +1,4 @@
-import "./globals.css";
+import "./builder.css";
 import "./form.css";
 
 export default function BuilderLayout({

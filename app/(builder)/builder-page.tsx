@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BuilderCenterPanel } from "../components/builder-center-panel";
 import { BuilderLeftPanel } from "../components/builder-left-panel";
@@ -35,6 +35,7 @@ type RightPanelTab =
   | "style"
   | "advanced-style"
   | "integrations";
+type BuilderDrawer = "left" | "right" | null;
 
 function cloneDefaultConfig(): BuilderConfig {
   return {
@@ -50,6 +51,14 @@ function cloneDefaultConfig(): BuilderConfig {
   };
 }
 
+function getDefaultPreviewMode(): PreviewMode {
+  if (typeof window === "undefined") {
+    return "desktop";
+  }
+
+  return window.innerWidth <= 768 ? "mobile" : "desktop";
+}
+
 export default function Home() {
   const [config, setConfig] = useState<BuilderConfig>(() => cloneDefaultConfig());
   const [selectedFieldId, setSelectedFieldId] = useState(
@@ -60,6 +69,7 @@ export default function Home() {
   const [copiedState, setCopiedState] = useState("");
   const [topbarTab, setTopbarTab] = useState<TopbarTab>("builder");
   const [rightPanelTab, setRightPanelTab] = useState<RightPanelTab>("field");
+  const [activeDrawer, setActiveDrawer] = useState<BuilderDrawer>(null);
   const [previewSubmitState] = useState<FormButtonState>("idle");
   const resolvedConfig = useMemo(() => normalizeBuilderConfig(config), [config]);
 
@@ -309,30 +319,77 @@ export default function Home() {
     setConfig(nextConfig);
     setSelectedFieldId(nextConfig.fields[0]?.id ?? "");
     setSelectedButtonId("");
-    setPreviewMode("desktop");
+    setPreviewMode(getDefaultPreviewMode());
     setTopbarTab("builder");
     setRightPanelTab("field");
+    setActiveDrawer(null);
   };
+
+  useEffect(() => {
+    setPreviewMode(getDefaultPreviewMode());
+  }, []);
+
+  useEffect(() => {
+    const closeDrawersOnWideScreens = () => {
+      if (window.innerWidth > 960) {
+        setActiveDrawer(null);
+      }
+    };
+
+    closeDrawersOnWideScreens();
+    window.addEventListener("resize", closeDrawersOnWideScreens);
+
+    return () => window.removeEventListener("resize", closeDrawersOnWideScreens);
+  }, []);
+
+  useEffect(() => {
+    if (!activeDrawer) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setActiveDrawer(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeDrawer]);
 
   const handleTopbarTabChange = (tab: TopbarTab) => {
     setTopbarTab(tab);
+    const isCompactViewport =
+      typeof window !== "undefined" ? window.innerWidth <= 960 : false;
 
     if (tab === "style") {
       setRightPanelTab("style");
+      if (isCompactViewport) {
+        setActiveDrawer("right");
+      }
       return;
     }
 
     if (tab === "integrations") {
       setRightPanelTab("integrations");
+      if (isCompactViewport) {
+        setActiveDrawer("right");
+      }
       return;
     }
 
     if (tab === "code") {
       setRightPanelTab((current) => (current === "sheets" ? "sheets" : "component"));
+      if (isCompactViewport) {
+        setActiveDrawer("right");
+      }
       return;
     }
 
     setRightPanelTab(selectedButtonId ? "button" : "field");
+    if (isCompactViewport) {
+      setActiveDrawer(null);
+    }
   };
 
   const handleFieldSelect = (fieldId: string) => {
@@ -340,6 +397,7 @@ export default function Home() {
     setSelectedFieldId(fieldId);
     setSelectedButtonId("");
     setRightPanelTab("field");
+    setActiveDrawer(null);
   };
 
   const handleButtonSelect = (buttonId: string) => {
@@ -347,10 +405,25 @@ export default function Home() {
     setSelectedFieldId("");
     setSelectedButtonId(buttonId);
     setRightPanelTab("button");
+    setActiveDrawer(null);
+  };
+
+  const handleDrawerToggle = (drawer: Exclude<BuilderDrawer, null>) => {
+    setActiveDrawer((current) => (current === drawer ? null : drawer));
   };
 
   return (
-    <main className="builder-app-shell">
+    <main
+      className={`builder-app-shell ${activeDrawer ? "is-drawer-open" : ""} ${
+        activeDrawer === "left" ? "is-left-drawer-open" : ""
+      } ${activeDrawer === "right" ? "is-right-drawer-open" : ""}`}
+    >
+      <button
+        aria-label="Close open panel"
+        className="builder-app-drawer-backdrop"
+        onClick={() => setActiveDrawer(null)}
+        type="button"
+      />
       <div className="builder-app">
         <BuilderTopbar
           activeTab={topbarTab}
@@ -374,6 +447,29 @@ export default function Home() {
           onAddButton={addButton}
         />
 
+        <button
+          aria-expanded={activeDrawer === "left"}
+          aria-label={activeDrawer === "left" ? "Close fields panel" : "Open fields panel"}
+          className={`builder-app-edge-handle builder-app-edge-handle-left ${
+            activeDrawer === "left" ? "is-active" : ""
+          }`}
+          onClick={() => handleDrawerToggle("left")}
+          type="button"
+        >
+          <span className="builder-app-edge-handle-icon" aria-hidden="true">
+            <svg viewBox="0 0 12 12" fill="none">
+              <path
+                d={activeDrawer === "left" ? "M7.5 2.5L4 6L7.5 9.5" : "M4.5 2.5L8 6L4.5 9.5"}
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+              />
+            </svg>
+          </span>
+          <span className="builder-app-edge-handle-label">Fields</span>
+        </button>
+
         <BuilderCenterPanel
           fields={resolvedConfig.fields}
           buttons={resolvedConfig.buttons}
@@ -389,6 +485,31 @@ export default function Home() {
           selectedButtonId={selectedButtonId}
           getFieldWidthClass={fieldWidthClass}
         />
+
+        <button
+          aria-expanded={activeDrawer === "right"}
+          aria-label={
+            activeDrawer === "right" ? "Close settings panel" : "Open settings panel"
+          }
+          className={`builder-app-edge-handle builder-app-edge-handle-right ${
+            activeDrawer === "right" ? "is-active" : ""
+          }`}
+          onClick={() => handleDrawerToggle("right")}
+          type="button"
+        >
+          <span className="builder-app-edge-handle-label">Settings</span>
+          <span className="builder-app-edge-handle-icon" aria-hidden="true">
+            <svg viewBox="0 0 12 12" fill="none">
+              <path
+                d={activeDrawer === "right" ? "M4.5 2.5L8 6L4.5 9.5" : "M7.5 2.5L4 6L7.5 9.5"}
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+              />
+            </svg>
+          </span>
+        </button>
 
         <BuilderRightPanel
           mode={topbarTab}
