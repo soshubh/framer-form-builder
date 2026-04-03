@@ -266,6 +266,7 @@ export function BuilderCenterPanel({
 
         <div className="builder-app-preview-mobile-tabs">
           <PreviewDeviceTabs
+            className="builder-app-preview-mobile-tabs-root"
             previewMode={previewMode}
             onPreviewModeChange={onPreviewModeChange}
           />

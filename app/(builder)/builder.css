@@ -1517,6 +1517,14 @@
     padding: 0 12px;
   }
 
+  .builder-app-topbar-logo {
+    margin-right: 10px;
+  }
+
+  .builder-app-topbar-wordmark {
+    display: none;
+  }
+
   .builder-app-topbar-divider {
     margin: 0 12px 0 6px;
   }
@@ -1696,5 +1704,23 @@
     padding: 0;
     background: transparent;
     transform: translateX(-50%);
+  }
+
+  .builder-app-preview-mobile-tabs-root {
+    min-height: 44px;
+    padding: 3px;
+    border-radius: 14px;
+    box-shadow: var(--landing-shadow-panel);
+  }
+
+  .builder-app-preview-mobile-tabs-root button {
+    min-height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
+    gap: 5px;
+  }
+
+  .builder-app-preview-mobile-tabs-root span {
+    font-size: 13px;
   }
 }

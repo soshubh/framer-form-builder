@@ -616,25 +616,3 @@
     max-width: 390px;
   }
 }
-
-@media (max-width: 720px) {
-  .builder-preview-form.is-two-col {
-    grid-template-columns: 1fr;
-  }
-
-  .builder-preview-actions.is-two-col {
-    grid-template-columns: 1fr;
-  }
-
-  .builder-field--full,
-  .builder-field--half,
-  .builder-field--third {
-    grid-column: auto;
-  }
-
-  .builder-app-form-shell,
-  .builder-app-form-shell.is-tablet,
-  .builder-app-form-shell.is-mobile {
-    max-width: 100%;
-  }
-}

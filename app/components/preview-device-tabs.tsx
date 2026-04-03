@@ -2,16 +2,22 @@ import type { PreviewMode } from "../lib/builder-config";
 import styles from "./preview-device-tabs.module.css";
 
 type PreviewDeviceTabsProps = {
+  className?: string;
   previewMode: PreviewMode;
   onPreviewModeChange: (mode: PreviewMode) => void;
 };
 
 export function PreviewDeviceTabs({
+  className,
   previewMode,
   onPreviewModeChange,
 }: PreviewDeviceTabsProps) {
   return (
-    <div className={styles.root} role="tablist" aria-label="Preview mode">
+    <div
+      className={className ? `${styles.root} ${className}` : styles.root}
+      role="tablist"
+      aria-label="Preview mode"
+    >
       <button
         type="button"
         className={`${styles.tab} ${previewMode === "desktop" ? styles.tabActive : ""}`}
