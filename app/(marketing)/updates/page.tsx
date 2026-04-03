@@ -29,8 +29,11 @@ export default function UpdatesPage() {
   return (
     <LandingSubpageShell
       eyebrow="Updates"
-      title="What changed most recently."
-      lede="This page surfaces product changes in a simple card rhythm, similar to the clean update style you pointed to, while staying consistent with this product’s darker visual system."
+      title="What's new."
+      lede="Recent changes, one card at a time."
+      heroClassName={styles.subpageHeroShifted}
+      titleClassName={styles.subpageHeroTitleFixed}
+      ledeClassName={styles.subpageHeroLedeFixed}
     >
       <section className={styles.subpageStack}>
         {updates.map((item) => (

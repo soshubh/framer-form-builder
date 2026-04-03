@@ -3,24 +3,34 @@ import styles from "../page.module.css";
 
 const audiences = [
   {
-    title: "Teams shipping lead forms fast",
+    title: "Own your delivery path",
     body:
-      "When a marketing or admissions team needs a form live quickly, the builder keeps the experience polished without waiting on a full frontend pass for every change.",
+      "Pick where submissions go. Sheets, webhook, or both. No default path forced on you.",
   },
   {
-    title: "Flows that need delivery logic",
+    title: "Forms with more than one step",
     body:
-      "This is for forms that must do more than submit. Google Sheets, webhook transport, redirects, and OTP-linked paths are part of the product value.",
+      "Multi-step flows, conditional fields, and state changes. Built from the same system, not patched together.",
   },
   {
-    title: "People who need consistency",
+    title: "Edit without opening the code",
     body:
-      "The builder is useful when inconsistent spacing, mismatched controls, and broken exports are costing time. It keeps the visual system and the code system aligned.",
+      "Change labels, spacing, layout, or behavior from the builder. Nothing requires a developer to update.",
   },
   {
-    title: "Framer users who still care about production",
+    title: "Connect to real tools",
     body:
-      "The tool is aimed at people who want Framer speed but do not want to accept weak validation, one-off code, or fragile submission logic.",
+      "Sheets, webhooks, OTP services. The integration is part of the build, not a separate setup after.",
+  },
+  {
+    title: "Ship fast, change faster",
+    body:
+      "Add fields, swap layouts, update flows. Without rebuilding the form from scratch each time.",
+  },
+  {
+    title: "Know what you want, skip the code",
+    body:
+      "You have a clear idea of how the form should behave. WHIM handles the logic so you don't have to write it.",
   },
 ];
 
@@ -28,9 +38,40 @@ export default function MadeForPage() {
   return (
     <LandingSubpageShell
       eyebrow="Made for"
-      title="Built for teams that need more than a pretty form."
-      lede="The strongest use case is when the form needs to look good, behave correctly, and connect to real workflows without rewriting everything by hand."
+      title="Built for real form problems."
+      lede="When the form needs to look right, behave correctly, and connect to actual workflows."
+      heroClassName={styles.subpageHeroShifted}
+      titleClassName={styles.subpageHeroTitleFixed}
+      ledeClassName={styles.subpageHeroLedeFixed}
     >
+      <section className={styles.subpageSection}>
+        <h2 className={styles.subpageSectionTitle}>
+          Where Framer stops by default
+        </h2>
+        <p className={styles.subpageSectionBody}>
+          Framer handles layout well. But once you need structured field logic,
+          conditional behavior, OTP verification, or a delivery path that
+          isn&apos;t hardcoded — you&apos;re on your own.
+        </p>
+        <ul className={styles.subpageBulletList}>
+          <li>
+            No built-in way to export a form as a ready-to-paste Framer
+            component.
+          </li>
+          <li>
+            Field conditions, phone/country split, and OTP flow need custom
+            code every time.
+          </li>
+          <li>
+            Google Sheets and webhook routing live outside the form, not
+            connected to it.
+          </li>
+          <li>
+            Changing a label or spacing means touching the code again.
+          </li>
+        </ul>
+      </section>
+
       <section className={styles.subpageGrid}>
         {audiences.map((item) => (
           <article className={styles.subpageSection} key={item.title}>
@@ -38,16 +79,6 @@ export default function MadeForPage() {
             <p className={styles.subpageSectionBody}>{item.body}</p>
           </article>
         ))}
-      </section>
-
-      <section className={styles.subpageSection}>
-        <h2 className={styles.subpageSectionTitle}>Typical use cases</h2>
-        <ul className={styles.subpageBulletList}>
-          <li>Admission and counseling forms that need structured lead capture.</li>
-          <li>High-intent enquiry forms where phone verification matters.</li>
-          <li>Internal teams that want Google Sheets as the simplest backend.</li>
-          <li>Framer sites that need code export without losing design fidelity.</li>
-        </ul>
       </section>
     </LandingSubpageShell>
   );

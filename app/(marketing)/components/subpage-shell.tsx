@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { LandingFooter } from "./footer";
+import { GridBackground } from "./GridBackground";
 import { marketingDisplay, marketingSans } from "./marketing-fonts";
 import { landingNavItems } from "./nav-items";
 import styles from "../page.module.css";
@@ -11,24 +12,52 @@ type LandingSubpageShellProps = {
   title: string;
   lede: string;
   children: ReactNode;
+  heroClassName?: string;
+  titleClassName?: string;
+  ledeClassName?: string;
 };
 
 export function LandingSubpageShell({
-  eyebrow,
+  eyebrow: _eyebrow,
   title,
   lede,
   children,
+  heroClassName,
+  titleClassName,
+  ledeClassName,
 }: LandingSubpageShellProps) {
   return (
     <main
       className={`${styles.page} ${marketingSans.variable} ${marketingDisplay.variable}`}
     >
+      <GridBackground />
       <LandingTopbar items={landingNavItems} />
       <div className={styles.subpageMain}>
-        <header className={styles.subpageHero}>
-          <p className={styles.subpageEyebrow}>{eyebrow}</p>
-          <h1 className={styles.subpageTitle}>{title}</h1>
-          <p className={styles.subpageLede}>{lede}</p>
+        <header
+          className={
+            heroClassName
+              ? `${styles.subpageHero} ${heroClassName}`
+              : styles.subpageHero
+          }
+        >
+          <h1
+            className={
+              titleClassName
+                ? `${styles.subpageTitle} ${titleClassName}`
+                : styles.subpageTitle
+            }
+          >
+            {title}
+          </h1>
+          <p
+            className={
+              ledeClassName
+                ? `${styles.subpageLede} ${ledeClassName}`
+                : styles.subpageLede
+            }
+          >
+            {lede}
+          </p>
         </header>
         <div className={styles.subpageSections}>{children}</div>
       </div>

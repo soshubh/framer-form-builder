@@ -573,7 +573,7 @@
 
 .learnCardBody {
   margin: 0;
-  font-size: var(--marketing-type-13);
+  font-size: var(--marketing-type-15);
   line-height: 1.6;
   color: var(--landing-color-text-muted);
 }
@@ -1001,36 +1001,58 @@
 }
 
 .subpageHero {
-  max-width: 760px;
+  max-width: var(--landing-max-width);
   margin: 0 auto 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
   text-align: center;
-}
-
-.subpageEyebrow {
-  margin: 0 0 14px;
-  color: var(--landing-color-text-tertiary);
-  font-size: var(--marketing-type-12);
-  font-weight: var(--marketing-weight-semibold);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .subpageTitle {
   margin: 0;
   font-family: var(--landing-font-display);
-  font-size: clamp(42px, 7vw, 72px);
-  line-height: 0.95;
-  letter-spacing: -0.045em;
+  font-size: var(--marketing-type-hero);
+  font-weight: var(--marketing-weight-medium);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
   color: var(--landing-text);
+  text-align: center;
 }
 
 .subpageLede {
-  max-width: 640px;
-  margin: 22px auto 0;
+  max-width: 760px;
+  margin: 0;
   color: var(--landing-text-soft);
   font-size: var(--marketing-type-18);
   line-height: 1.65;
   letter-spacing: -0.015em;
+  text-align: center;
+}
+
+.subpageHeroShifted {
+  padding-top: 28px;
+}
+
+.subpageHeroTitleFixed {
+  max-width: 11ch;
+}
+
+.subpageHeroLedeFixed {
+  max-width: 620px;
+}
+
+.madeByHero {
+  padding-top: 28px;
+}
+
+.madeByHeroTitle {
+  max-width: 10ch;
+}
+
+.madeByHeroLede {
+  max-width: 620px;
 }
 
 .subpageSections {
@@ -1047,18 +1069,19 @@
 }
 
 .subpageSectionTitle {
-  margin: 0 0 10px;
-  font-size: 24px;
-  font-weight: 600;
+  margin: 0 0 8px;
+  font-size: var(--marketing-type-18);
+  font-weight: var(--marketing-weight-semibold);
   letter-spacing: -0.03em;
   color: var(--landing-text);
+  line-height: 1.25;
 }
 
 .subpageSectionBody {
   margin: 0;
-  color: var(--landing-text-soft);
+  color: var(--landing-color-text-muted);
   font-size: var(--marketing-type-15);
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
 .subpageGrid {
@@ -1067,9 +1090,99 @@
   gap: 24px;
 }
 
+.subpageAccordion {
+  display: grid;
+  gap: 16px;
+}
+
+.subpageAccordionItem {
+  border: 1px solid var(--landing-color-border);
+  border-radius: var(--landing-radius-xl);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.subpageAccordionSummary {
+  list-style: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 28px;
+  cursor: pointer;
+}
+
+.subpageAccordionSummary::-webkit-details-marker {
+  display: none;
+}
+
+.subpageAccordionSummaryCopy {
+  display: grid;
+  gap: 8px;
+  text-align: left;
+  justify-items: start;
+}
+
+.subpageAccordionSummaryCopy .subpageSectionTitle {
+  margin: 0;
+}
+
+.subpageAccordionChevron {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: var(--landing-color-primary);
+  font-size: 24px;
+  font-weight: var(--marketing-weight-regular);
+  line-height: 1;
+  transition: transform 0.18s ease;
+}
+
+.subpageAccordionItem[open] .subpageAccordionChevron {
+  transform: rotate(45deg);
+}
+
+.subpageAccordionContent {
+  padding: 0 28px 24px;
+}
+
 .subpageStack {
   display: grid;
   gap: 16px;
+}
+
+.subpagePath {
+  display: grid;
+  gap: 0;
+}
+
+.subpagePathStep {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 20px;
+}
+
+.subpagePathRail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.subpagePathStep:not(:last-child) .subpagePathRail::after {
+  content: "";
+  position: absolute;
+  top: 28px;
+  bottom: -28px;
+  width: 1px;
+  background: var(--landing-color-border);
+}
+
+.subpagePathContent {
+  padding-bottom: 28px;
 }
 
 .subpageStepNumber {
@@ -1707,10 +1820,46 @@
     padding-bottom: 72px;
   }
   .subpageHero {
+    gap: 18px;
     margin-bottom: 48px;
+  }
+  .subpageTitle,
+  .subpageLede {
+    text-align: center;
+  }
+  .subpageTitle {
+    font-size: 50px;
+    line-height: 0.9em;
+    letter-spacing: -0.04em;
+  }
+  .subpageHeroShifted {
+    padding-top: 12px;
+  }
+  .madeByHero {
+    padding-top: 12px;
   }
   .subpageGrid {
     grid-template-columns: 1fr;
+  }
+  .subpageAccordionSummary {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+  .subpageAccordionSummaryCopy,
+  .subpageAccordionSummaryCopy .subpageSectionTitle,
+  .subpageAccordionSummaryCopy .subpageSectionBody {
+    text-align: left;
+    justify-items: start;
+  }
+  .subpageAccordionContent {
+    padding: 0 16px 20px;
+  }
+  .subpagePathStep {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .subpagePathContent {
+    padding-bottom: 24px;
   }
   .subpageSection,
   .subpageUpdateCard {
