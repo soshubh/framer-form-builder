@@ -1093,6 +1093,10 @@ function getFieldWidth(field, activeMode) {
     return field.mobileWidth
   }
 
+  if (activeMode === "mobile") {
+    return "full"
+  }
+
   if (activeMode === "tablet" && field.tabletWidth) {
     return field.tabletWidth
   }

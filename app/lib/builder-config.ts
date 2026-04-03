@@ -177,6 +177,9 @@ export const DEFAULT_CONFIG: BuilderConfig = {
   buttons: INITIAL_BUTTONS,
   styling: {
     layout: "2-col",
+    mobileOverrides: {
+      layout: "1-col",
+    },
     formPaddingMode: "all",
     formPadding: 28,
     formPaddingTop: 28,
@@ -420,8 +423,14 @@ export function normalizeBuilderConfig(config: BuilderConfig): BuilderConfig {
     } satisfies Partial<StylingValues>;
   };
 
-  const tabletOverrides = normalizeOverride(rawStyling.tabletOverrides, legacyStyling.tabletLayout);
-  const mobileOverrides = normalizeOverride(rawStyling.mobileOverrides, legacyStyling.mobileLayout);
+  const tabletOverrides = normalizeOverride(
+    rawStyling.tabletOverrides ?? DEFAULT_CONFIG.styling.tabletOverrides,
+    legacyStyling.tabletLayout,
+  );
+  const mobileOverrides = normalizeOverride(
+    rawStyling.mobileOverrides ?? DEFAULT_CONFIG.styling.mobileOverrides,
+    legacyStyling.mobileLayout,
+  );
 
   return {
     ...DEFAULT_CONFIG,
@@ -706,7 +715,7 @@ export function getFieldWidthForPreview(field: Field, previewMode: PreviewMode) 
   }
 
   if (previewMode === "mobile") {
-    return field.mobileWidth ?? field.width;
+    return field.mobileWidth ?? "full";
   }
 
   return field.width;
